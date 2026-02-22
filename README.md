@@ -12,7 +12,7 @@ Cream uses GraalVM's Crema (RuntimeClassLoading) to enable runtime `eval`,
 ## Quick start
 
 ```sh
-$ JAVA_HOME=/path/to/jdk ./cream -M -e '(+ 1 2 3)'
+$ ./cream -M -e '(+ 1 2 3)'
 6
 ```
 
@@ -28,18 +28,13 @@ Use `-Scp` to add JARs to the classpath:
 
 ## Requirements
 
-Cream may require `JAVA_HOME` pointing to a JDK installation. Crema loads
-classes at runtime from the JDK's `lib/modules` (JRT filesystem). Whether
-this can be embedded in the binary is an open question (see
-[Future work](#future-work)).
-
-```sh
-JAVA_HOME=/path/to/jdk ./cream -M -e '(+ 1 2 3)'
-```
+Some Java interop may require `JAVA_HOME` pointing to a JDK installation, as
+Crema loads certain classes at runtime from the JDK's `lib/modules` (JRT
+filesystem). Pure Clojure code works without `JAVA_HOME`.
 
 ## Known limitations
 
-- **May not be standalone** — currently requires `JAVA_HOME` at runtime (unlike babashka)
+- **May need `JAVA_HOME` for Java interop** — some JDK classes require `JAVA_HOME` at runtime; pure Clojure works without it
 - **Requires a lightly patched Clojure fork** — minor workarounds for Crema
   quirks in `RT.java`, `Var.java`, and `Compiler.java`
   ([details](doc/technical.md#fork-changes))
@@ -66,7 +61,7 @@ workarounds.
 | **Java interop** | Full (runtime class loading) | Limited to compiled-in classes |
 | **Startup** | ~20ms | ~5ms |
 | **Binary size** | ~300MB | ~30MB |
-| **Standalone** | No (`JAVA_HOME` required) | Yes |
+| **Standalone** | Mostly (may need `JAVA_HOME` for Java interop) | Yes |
 | **Maturity** | Experimental | Production-ready |
 
 **When cream might make sense**: you need full Clojure compatibility, arbitrary
@@ -124,8 +119,8 @@ Requires a GraalVM EA build with RuntimeClassLoading support.
 
 ## Future work
 
-- **Standalone binary** — investigate whether JRT metadata can be bundled in
-  the binary to eliminate the `JAVA_HOME` requirement
+- **Fully standalone binary** — investigate whether JRT metadata can be bundled
+  in the binary to eliminate the `JAVA_HOME` requirement for Java interop
 - **Enum support** — blocked on Crema fixing `enum.values()` /
   `InterpreterResolvedObjectType.getDeclaredMethodsList()` NPE. Would unblock
   http-kit, cheshire, clj-yaml
