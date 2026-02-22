@@ -62,8 +62,6 @@ jobs:
       - name: Run library tests
         shell: bash
         run: bb run-lib-tests
-        env:
-          JAVA_HOME: ${{ env.JAVA_HOME }}
 
       - name: Package binary (unix)
         if: matrix.platform != 'windows'
