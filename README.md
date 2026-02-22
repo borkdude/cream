@@ -99,12 +99,24 @@ Cream runs Clojure code through Crema's interpreter, so tight loops are slower
 than babashka where SCI compiles to pre-built JVM classes:
 
 ```sh
-# 10M iterations
+# 10M loop iterations — bb is ~3x faster
 $ ./cream -M -e '(time (loop [i 0] (when (< i 10000000) (recur (inc i)))))'
 "Elapsed time: 720 msecs"
 
 $ bb -e '(time (loop [i 0] (when (< i 10000000) (recur (inc i)))))'
 "Elapsed time: 270 msecs"
+```
+
+Java interop is faster in cream since it calls methods directly rather than
+through SCI's reflection layer:
+
+```sh
+# 100K StringBuilder appends — cream is ~2x faster
+$ ./cream -M -e '(time (let [sb (StringBuilder.)] (dotimes [i 100000] (.append sb (str i))) (.length sb)))'
+"Elapsed time: 32 msecs"
+
+$ bb -e '(time (let [sb (StringBuilder.)] (dotimes [i 100000] (.append sb (str i))) (.length sb)))'
+"Elapsed time: 72 msecs"
 ```
 
 When cream might make sense: you need full Clojure compatibility, arbitrary
