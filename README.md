@@ -92,7 +92,20 @@ workarounds.
 | Startup | ~20ms | ~20ms |
 | Binary size | ~300MB | ~70MB |
 | Standalone | Mostly (may need `JAVA_HOME` for Java interop) | Yes |
+| Loop performance | ~720ms (interpreted) | ~270ms (compiled) |
 | Maturity | Experimental | Production-ready |
+
+Cream runs Clojure code through Crema's interpreter, so tight loops are slower
+than babashka where SCI compiles to pre-built JVM classes:
+
+```sh
+# 10M iterations
+$ ./cream -M -e '(time (loop [i 0] (when (< i 10000000) (recur (inc i)))))'
+"Elapsed time: 720 msecs"
+
+$ bb -e '(time (loop [i 0] (when (< i 10000000) (recur (inc i)))))'
+"Elapsed time: 270 msecs"
+```
 
 When cream might make sense: you need full Clojure compatibility, arbitrary
 library loading, or Java interop beyond what babashka offers.
