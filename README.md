@@ -92,7 +92,7 @@ workarounds.
 | Startup | ~20ms | ~20ms |
 | Binary size | ~300MB | ~70MB |
 | Standalone | Mostly (may need `JAVA_HOME` for Java interop) | Yes |
-| Loop performance | ~720ms (interpreted) | ~270ms (compiled) |
+| Loop 10M iterations | ~720ms | ~270ms |
 | Compile time (GitHub Actions, linux-amd64) | ~10min | ~3min |
 | Maturity | Experimental | Production-ready |
 
