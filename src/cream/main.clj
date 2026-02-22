@@ -44,6 +44,11 @@
       [cp args])))
 
 (defn -main [& args]
+  ;; On Windows, *out* captured at build time has the wrong encoding.
+  ;; https://github.com/babashka/babashka/issues/1009
+  ;; https://github.com/oracle/graal/issues/12249
+  (when (.contains (System/getProperty "os.name") "Windows")
+    (alter-var-root #'*out* (constantly (java.io.OutputStreamWriter. System/out))))
   (let [[cp-str remaining] (parse-args args)
         _ (when cp-str
             (let [paths (.split ^String cp-str (System/getProperty "path.separator"))
