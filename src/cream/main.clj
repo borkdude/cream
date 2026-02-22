@@ -46,7 +46,7 @@
 (defn -main [& args]
   (let [[cp-str remaining] (parse-args args)
         _ (when cp-str
-            (let [paths (.split ^String cp-str ":")
+            (let [paths (.split ^String cp-str (System/getProperty "path.separator"))
                   cl (JarClassLoader. paths (.getContextClassLoader (Thread/currentThread)))]
               (.setContextClassLoader (Thread/currentThread) cl)))
         [flag & main-args] remaining]
