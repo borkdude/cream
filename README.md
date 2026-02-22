@@ -77,7 +77,7 @@ workarounds.
 | Clojure | Full JVM Clojure (1.13 fork) | SCI interpreter (subset) |
 | Library loading | Any library from JARs at runtime | Any library (with built-in classes, SCI/deftype limitations) |
 | Java interop | Full (runtime class loading) | Limited to compiled-in classes |
-| Startup | ~20ms | ~5ms |
+| Startup | ~20ms | ~20ms |
 | Binary size | ~300MB | ~70MB |
 | Standalone | Mostly (may need `JAVA_HOME` for Java interop) | Yes |
 | Maturity | Experimental | Production-ready |
