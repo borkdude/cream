@@ -75,7 +75,7 @@
       (do (println (format "\nSkipping %s (no test dir found)" lib-str))
           (swap! results conj {:lib lib-str :status :skip}))
       (let [test-paths (mapv #(str (fs/file git-dir %)) test-dirs)
-            full-cp (str lib-cp ":" (str/join ":" test-paths))
+            full-cp (str lib-cp fs/path-separator (str/join fs/path-separator test-paths))
             skips (get skip-tests lib-name)
             skip-nses (get skip-namespaces lib-name)
             skip-expr (when (seq skips)
