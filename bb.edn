@@ -1,0 +1,11 @@
+{:tasks
+ {build-native {:doc "Build native binary (requires GRAALVM_HOME)"
+                :task (shell "bb" "bb/build_native.clj")}
+  gen-reflect  {:doc "Generate reflect-config.json"
+                :task (shell "bb" "bb/gen_reflect_config.clj")}
+  uber         {:doc "Build uberjar only"
+                :task (clojure "-T:build" "uber")}
+  clean        {:doc "Clean target directory"
+                :task (clojure "-T:build" "clean")}
+  run-lib-tests {:doc "Run library tests against cream binary"
+                 :task (apply shell "bb" "bb/run_lib_tests.clj" *command-line-args*)}}}

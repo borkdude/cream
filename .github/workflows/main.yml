@@ -1,0 +1,109 @@
+name: Build cream
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            arch: amd64
+            platform: linux
+            ext: ""
+          - os: macos-latest
+            arch: aarch64
+            platform: macos
+            ext: ""
+          - os: windows-latest
+            arch: amd64
+            platform: windows
+            ext: ".exe"
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up GraalVM EA
+        uses: graalvm/setup-graalvm@v1
+        with:
+          java-version: '25e1-ea'
+          distribution: 'graalvm'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Clone and install Clojure fork
+        shell: bash
+        run: |
+          git clone -b crema --depth 1 https://github.com/borkdude/clojure.git /tmp/clojure-fork
+          cd /tmp/clojure-fork
+          mvn install -Dmaven.test.skip=true -q
+
+      - name: Install Clojure tools
+        uses: DeLaGuardo/setup-clojure@13.4
+        with:
+          cli: latest
+          bb: latest
+
+      - name: Set up MSVC (Windows)
+        if: matrix.platform == 'windows'
+        uses: ilammy/msvc-dev-cmd@v1
+
+      - name: Build native binary
+        shell: bash
+        run: bb bb/build_native.clj
+        env:
+          GRAALVM_HOME: ${{ env.JAVA_HOME }}
+
+      - name: Package binary (unix)
+        if: matrix.platform != 'windows'
+        shell: bash
+        run: tar czf cream-${{ matrix.platform }}-${{ matrix.arch }}.tar.gz cream
+
+      - name: Package binary (windows)
+        if: matrix.platform == 'windows'
+        shell: bash
+        run: 7z a cream-${{ matrix.platform }}-${{ matrix.arch }}.zip cream.exe
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: cream-${{ matrix.platform }}-${{ matrix.arch }}
+          path: cream-${{ matrix.platform }}-${{ matrix.arch }}.${{ matrix.platform == 'windows' && 'zip' || 'tar.gz' }}
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          merge-multiple: true
+
+      - name: Create or update dev release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: dev
+          name: Development Build
+          prerelease: true
+          make_latest: false
+          files: |
+            cream-linux-amd64.tar.gz
+            cream-macos-aarch64.tar.gz
+            cream-windows-amd64.zip
+          body: |
+            Rolling development build of cream (Clojure + Crema).
+
+            **Requires `JAVA_HOME` pointing to a GraalVM EA build with RuntimeClassLoading support.**
+
+            ```sh
+            tar xzf cream-<platform>-<arch>.tar.gz
+            JAVA_HOME=/path/to/graalvm ./cream -M -e '(+ 1 2 3)'
+            ```
