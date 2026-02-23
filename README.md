@@ -62,8 +62,7 @@ Use `-Scp` to add JARs to the classpath:
 ## Running Java files
 
 Cream can run `.java` source files directly, compiling and caching them
-automatically. This makes it a fast alternative to [JBang](https://www.jbang.dev/)
-with fast startup.
+automatically. This makes it a fast alternative to [JBang](https://www.jbang.dev/).
 
 ```java
 public class Hello {
