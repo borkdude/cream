@@ -112,7 +112,7 @@ $ bb -e '(time (let [sb (StringBuilder.)] (dotimes [i 100000] (.append sb (str i
 
 Pure clojure loading/parsing time from libraries would be slower than bb/SCI in cream as here it needs to first compile the clojure code into bytecodes and then run it.
 Whereas bb interprets it directly through SCI without compilation.
-This may have an impact on the startup time expectations but not the actual performace of the running the loaded code.
+This may have an impact on the startup time expectations.
 
 ```sh
 $ ./cream -Scp "$(clojure -Spath -Sdeps '{:deps {camel-snake-kebab/camel-snake-kebab {:mvn/version "0.4.3"}}}')" -M -e '(time (require (quote [camel-snake-kebab.core :as csk])))'
