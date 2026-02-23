@@ -4,7 +4,9 @@ Clojure + [Crema](https://github.com/oracle/graal/issues/11327): a native
 binary that runs full JVM Clojure with fast startup.
 
 Cream uses GraalVM's Crema (RuntimeClassLoading) to enable runtime `eval`,
-`require`, and library loading in a native binary.
+`require`, and library loading in a native binary. It can also [run Java source
+files](#running-java-files) directly, as a fast alternative to
+[JBang](https://www.jbang.dev/).
 
 > Warning: Cream is very alpha. It depends on GraalVM Crema (EA) and a
 > custom Clojure fork. Do not use in production. Issues and ideas are welcome
@@ -56,6 +58,64 @@ Use `-Scp` to add JARs to the classpath:
   -M -e '(do (require (quote [clojure.data.json :as json])) (json/write-str {:a 1}))'
 ;; => "{\"a\":1}"
 ```
+
+## Running Java files
+
+Cream can run `.java` source files directly, compiling and caching them
+automatically. This makes it a fast alternative to [JBang](https://www.jbang.dev/)
+with fast startup.
+
+```sh
+$ cat /tmp/Hello.java
+public class Hello {
+    public static void main(String[] args) {
+        System.out.println("Hello from Java!");
+        if (args.length > 0) {
+            System.out.println("Args: " + String.join(", ", args));
+        }
+    }
+}
+
+$ ./cream /tmp/Hello.java
+Hello from Java!
+
+$ ./cream /tmp/Hello.java world
+Hello from Java!
+Args: world
+```
+
+### Dependencies
+
+Use `//DEPS` comments (same syntax as JBang) to declare Maven dependencies:
+
+```sh
+$ cat /tmp/HelloCodec.java
+//DEPS commons-codec:commons-codec:1.17.1
+
+import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.codec.digest.DigestUtils;
+
+public class HelloCodec {
+    public static void main(String[] args) {
+        String input = args.length > 0 ? args[0] : "hello world";
+        System.out.println("Input: " + input);
+        System.out.println("Hex: " + Hex.encodeHexString(input.getBytes()));
+        System.out.println("SHA-256: " + DigestUtils.sha256Hex(input));
+    }
+}
+
+$ time ./cream /tmp/HelloCodec.java
+Input: hello world
+Hex: 68656c6c6f20776f726c64
+SHA-256: b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9
+./cream /tmp/HelloCodec.java  0.02s user 0.01s system 93% cpu 0.031 total
+```
+
+Dependencies are resolved from Maven Central using
+[deps.clj](https://github.com/borkdude/deps.clj), with no external tooling
+required. Compiled classes and resolved classpaths are cached under
+`$XDG_CACHE_HOME/cream/` (defaulting to `~/.cache/cream/`) so subsequent runs
+skip compilation and dependency resolution.
 
 ## Requirements
 
