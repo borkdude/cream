@@ -24,6 +24,7 @@
          "-H:Preserve=package=java.io"
          "-H:Preserve=package=java.lang"
          "-H:Preserve=package=java.lang.invoke"
+         "-H:Preserve=package=java.lang.runtime"
          "-H:Preserve=package=java.lang.ref"
          "-H:Preserve=package=java.lang.reflect"
          "-H:Preserve=package=java.math"

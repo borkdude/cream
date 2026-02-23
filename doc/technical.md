@@ -72,7 +72,8 @@ Packages preserved via `-H:Preserve=package=X` in `build_native.clj`, based on
 babashka's `impl/classes.clj`:
 
 - `clojure.lang` — `creator` static field (functional interface support)
-- `java.lang`, `java.lang.invoke`, `java.lang.ref`, `java.lang.reflect`
+- `java.lang`, `java.lang.invoke`, `java.lang.ref`, `java.lang.reflect`,
+  `java.lang.runtime` — `SwitchBootstraps` (Java 21+ pattern matching switch)
 - `java.io`, `java.math`, `java.net`, `java.net.http`
 - `java.nio`, `java.nio.channels`, `java.nio.charset`, `java.nio.file`,
   `java.nio.file.attribute`
