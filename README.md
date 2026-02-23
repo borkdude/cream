@@ -110,6 +110,25 @@ $ bb -e '(time (let [sb (StringBuilder.)] (dotimes [i 100000] (.append sb (str i
 "Elapsed time: 72 msecs"
 ```
 
+Pure clojure loading/parsing time from libraries would be slower than bb/SCI in cream as here it needs to first compile the clojure code into bytecodes and then run it.
+Whereas bb interprets it directly through SCI without compilation.
+This may have an impact on the startup time expectations but not the actual performace of the running the loaded code.
+
+```sh
+$ ./cream -Scp "$(clojure -Spath -Sdeps '{:deps {camel-snake-kebab/camel-snake-kebab {:mvn/version "0.4.3"}}}')" -M -e '(time (require (quote [camel-snake-kebab.core :as csk])))'
+"Elapsed time: 125.03336 msecs"
+
+$ bb -cp "$(clojure -Spath -Sdeps '{:deps {camel-snake-kebab/camel-snake-kebab {:mvn/version "0.4.3"}}}')" -e '(time (require (quote [camel-snake-kebab.core :as csk])))'
+"Elapsed time: 26.231804 msecs"
+
+$ ./cream -Scp "$(clojure -Spath -Sdeps '{:deps {dev.weavejester/medley {:mvn/version "1.9.0"}}}')" -M -e '(time (require (quote [medley.core :as mc])))'
+Reflection warning, medley/core.cljc:519:25 - call to java.util.ArrayList ctor can't be resolved.
+"Elapsed time: 120.566124 msecs"
+
+$ bb -cp "$(clojure -Spath -Sdeps '{:deps {dev.weavejester/medley {:mvn/version "1.9.0"}}}')" -e '(time (require (quote [medley.core :as mc])))'
+"Elapsed time: 32.24462 msecs"
+```
+
 When cream might make sense: you need full Clojure compatibility, arbitrary
 library loading, or Java interop beyond what babashka offers.
 
