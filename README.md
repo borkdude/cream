@@ -110,23 +110,28 @@ $ bb -e '(time (let [sb (StringBuilder.)] (dotimes [i 100000] (.append sb (str i
 "Elapsed time: 72 msecs"
 ```
 
-Pure clojure loading/parsing time from libraries would be slower than bb/SCI in cream as here it needs to first compile the clojure code into bytecodes and then run it.
-Whereas bb interprets it directly through SCI without compilation.
-This may have an impact on the startup time expectations.
+Some perceived difference in loading/parsing time of pure clojure code and runtime performance. Some of these could be addressed by the [addition](https://github.com/oracle/graal/issues/11327#issuecomment-3914916673) of a JIT to Crema:
 
 ```sh
-$ ./cream -Scp "$(clojure -Spath -Sdeps '{:deps {camel-snake-kebab/camel-snake-kebab {:mvn/version "0.4.3"}}}')" -M -e '(time (require (quote [camel-snake-kebab.core :as csk])))'
-"Elapsed time: 125.03336 msecs"
+$ bb -cp "$(clojure -Spath -Sdeps '{:deps {dev.weavejester/medley {:mvn/version "1.9.0"}}}')" -e '(time (require (quote [medley.core :as mc]))) (time (dotimes [i 100000] (mc/greatest 5 2 1 3 4)))'
+"Elapsed time: 31.452928 msecs"
+"Elapsed time: 347.639424 msecs"
 
-$ bb -cp "$(clojure -Spath -Sdeps '{:deps {camel-snake-kebab/camel-snake-kebab {:mvn/version "0.4.3"}}}')" -e '(time (require (quote [camel-snake-kebab.core :as csk])))'
-"Elapsed time: 26.231804 msecs"
+$ ./cream -Scp "$(clojure -Spath -Sdeps '{:deps {dev.weavejester/medley {:mvn/version "1.9.0"}}}')" -M -e '(time (require (quote [medley.core :as mc]))) (time (dotimes [i 100000] (mc/greatest 5 2 1 3 4)))'
 
-$ ./cream -Scp "$(clojure -Spath -Sdeps '{:deps {dev.weavejester/medley {:mvn/version "1.9.0"}}}')" -M -e '(time (require (quote [medley.core :as mc])))'
 Reflection warning, medley/core.cljc:519:25 - call to java.util.ArrayList ctor can't be resolved.
-"Elapsed time: 120.566124 msecs"
+"Elapsed time: 122.997416 msecs"
+"Elapsed time: 785.789744 msecs"
 
-$ bb -cp "$(clojure -Spath -Sdeps '{:deps {dev.weavejester/medley {:mvn/version "1.9.0"}}}')" -e '(time (require (quote [medley.core :as mc])))'
-"Elapsed time: 32.24462 msecs"
+$ ./cream -Scp "$(clojure -Spath -Sdeps '{:deps {camel-snake-kebab/camel-snake-kebab {:mvn/version "0.4.3"}}}')" -M -e '(time (require (quote [camel-snake-kebab.core :as csk]))) (time (dotimes [i 100000] (csk/->SCREAMING_SNAKE_CASE "I am constant")))'
+
+"Elapsed time: 124.247888 msecs"
+"Elapsed time: 11771.946679 msecs"
+
+$ bb -cp "$(clojure -Spath -Sdeps '{:deps {camel-snake-kebab/camel-snake-kebab {:mvn/version "0.4.3"}}}')" -e '(time (require (quote [camel-snake-kebab.core :as csk]))) (time (dotimes [i 100000] (csk/->SCREAMING_SNAKE_CASE "I am constant")))'
+
+"Elapsed time: 25.805933 msecs"
+"Elapsed time: 3285.816775 msecs"
 ```
 
 When cream might make sense: you need full Clojure compatibility, arbitrary
