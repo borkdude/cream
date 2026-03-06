@@ -43,4 +43,6 @@
                          :git/sha "2914602ff08352a15ae2cdaa49f76e6ca0386818"}
                         prismatic/schema
                         {:git/url "https://github.com/plumatic/schema"
-                         :git/sha "74a1ecdb645d3f43b405a27e2b70f72db861b7ca"}}}}}
+                         :git/sha "74a1ecdb645d3f43b405a27e2b70f72db861b7ca"}
+                        instaparse/instaparse
+                        {:mvn/version "1.5.0"}}}}}

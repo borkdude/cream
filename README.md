@@ -226,6 +226,7 @@ Libraries are tested against the cream binary using `bb run-lib-tests`.
 | [tick](https://github.com/juxt/tick) | | Works | |
 | [clj-commons/fs](https://github.com/clj-commons/fs) | | Works | |
 | [prismatic/schema](https://github.com/plumatic/schema) | :white_check_mark: | Works | |
+| [instaparse](https://github.com/Engelberg/instaparse) | :white_check_mark: | Works | |
 | [flatland/useful](https://github.com/flatland/useful) | | Works | |
 | [http-kit](https://github.com/http-kit/http-kit) | | Fails | Enum `values()` NPE in Crema |
 | [cheshire](https://github.com/dakrone/cheshire) | | Fails | Jackson enum `values()` NPE in Crema |

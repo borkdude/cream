@@ -46,6 +46,15 @@
 (def skip-libs #{'io.github.cognitect-labs/test-runner
                  'org.clojure/test.check})
 
+;; Maven-only libs that need a separate git clone for tests.
+;; These use project.clj (no deps.edn) so can't be git deps.
+(def clone-libs
+  {'instaparse/instaparse
+   {:git-url "https://github.com/Engelberg/instaparse"
+    :test-dirs ["test"]
+    ;; defparser macro reads grammar files via relative paths
+    :run-from-clone true}})
+
 ;; Specific test vars to skip per library.
 ;; Each entry is a fully qualified var that gets :skip-cream metadata.
 (def skip-tests
@@ -83,44 +92,62 @@
     "clojure.core.async.ioc-macros-test"
     "clojure.core.pipeline-test"]})
 
-(doseq [[lib-name {:keys [git/sha]}] (sort-by key lib-tests)
+(defn- run-lib-test [{:keys [lib-name lib-str test-paths work-dir]}]
+  (let [full-cp (str lib-cp fs/path-separator (str/join fs/path-separator test-paths))
+        skips (get skip-tests lib-name)
+        skip-nses (get skip-namespaces lib-name)
+        skip-expr (when (seq skips)
+                    (str/join " "
+                      (for [v skips]
+                        (let [[ns-str] (str/split v #"/")]
+                          (format "(do (require '%s) (alter-meta! #'%s assoc :skip-cream true) nil)"
+                                  ns-str v)))))
+        ;; Build ns regex that excludes skipped namespaces
+        ns-regex (if (seq skip-nses)
+                   (let [exclude-pattern (str "(?!" (str/join "|" (map #(str/replace % "." "\\.") skip-nses)) "$)")]
+                     (str exclude-pattern "(.*-test$|.*test-.*|.*test$)"))
+                   ".*-test$|.*test-.*|.*test$")
+        cream-path (str (fs/absolutize "cream"))
+        cmd (cond-> [cream-path "-Scp" full-cp "-M"]
+              skip-expr (into ["-e" skip-expr])
+              true      (into (concat ["-m" "cognitect.test-runner"
+                                       "-r" ns-regex
+                                       "-e" "skip-cream"]
+                                      (mapcat #(vector "-d" %) test-paths))))]
+    (println (format "\nTesting %s" lib-str))
+    (when (seq skips)
+      (doseq [s skips] (println (str "  skipping test " s))))
+    (when (seq skip-nses)
+      (doseq [s skip-nses] (println (str "  skipping ns " s))))
+    (let [proc (apply p/process {:inherit true :dir (or work-dir ".")} cmd)
+          exit-code (:exit @proc)]
+      (swap! results conj {:lib lib-str :status (if (zero? exit-code) :pass :fail)}))))
+
+(doseq [[lib-name coord] (sort-by key lib-tests)
         :when (not (skip-libs lib-name))
         :let [lib-str (str lib-name)]
         :when (or (nil? filter-lib) (= filter-lib lib-str))]
-  (let [git-dir (str (gitlibs-dir lib-name sha))
-        test-dirs (find-test-dirs git-dir)]
-    (if-not test-dirs
-      (do (println (format "\nSkipping %s (no test dir found)" lib-str))
-          (swap! results conj {:lib lib-str :status :skip}))
-      (let [test-paths (mapv #(str (fs/file git-dir %)) test-dirs)
-            full-cp (str lib-cp fs/path-separator (str/join fs/path-separator test-paths))
-            skips (get skip-tests lib-name)
-            skip-nses (get skip-namespaces lib-name)
-            skip-expr (when (seq skips)
-                        (str/join " "
-                          (for [v skips]
-                            (let [[ns-str] (str/split v #"/")]
-                              (format "(do (require '%s) (alter-meta! #'%s assoc :skip-cream true) nil)"
-                                      ns-str v)))))
-            ;; Build ns regex that excludes skipped namespaces
-            ns-regex (if (seq skip-nses)
-                       (let [exclude-pattern (str "(?!" (str/join "|" (map #(str/replace % "." "\\.") skip-nses)) "$)")]
-                         (str exclude-pattern "(.*-test$|.*test-.*|.*test$)"))
-                       ".*-test$|.*test-.*|.*test$")
-            cmd (cond-> ["./cream" "-Scp" full-cp "-M"]
-                  skip-expr (into ["-e" skip-expr])
-                  true      (into (concat ["-m" "cognitect.test-runner"
-                                           "-r" ns-regex
-                                           "-e" "skip-cream"]
-                                          (mapcat #(vector "-d" %) test-paths))))
-            _ (println (format "\nTesting %s" lib-str))
-            _ (when (seq skips)
-                (doseq [s skips] (println (str "  skipping test " s))))
-            _ (when (seq skip-nses)
-                (doseq [s skip-nses] (println (str "  skipping ns " s))))
-            proc (apply p/process {:inherit true} cmd)
-            exit-code (:exit @proc)]
-        (swap! results conj {:lib lib-str :status (if (zero? exit-code) :pass :fail)})))))
+  (if-let [{:keys [git-url test-dirs run-from-clone]} (get clone-libs lib-name)]
+    ;; Maven lib with separate clone for tests
+    (let [clone-dir (str (fs/file (fs/temp-dir) (str "cream-test-" (name lib-name))))
+          _ (when-not (fs/exists? clone-dir)
+              (println (format "Cloning %s..." lib-str))
+              (p/shell "git" "clone" "--depth" "1" git-url clone-dir))
+          test-paths (mapv #(str (fs/file clone-dir %)) test-dirs)]
+      (run-lib-test {:lib-name lib-name
+                     :lib-str lib-str
+                     :test-paths test-paths
+                     :work-dir (when run-from-clone clone-dir)}))
+    ;; Standard git dep
+    (let [git-dir (str (gitlibs-dir lib-name (:git/sha coord)))
+          test-dirs (find-test-dirs git-dir)]
+      (if-not test-dirs
+        (do (println (format "\nSkipping %s (no test dir found)" lib-str))
+            (swap! results conj {:lib lib-str :status :skip}))
+        (let [test-paths (mapv #(str (fs/file git-dir %)) test-dirs)]
+          (run-lib-test {:lib-name lib-name
+                         :lib-str lib-str
+                         :test-paths test-paths}))))))
 
 ;; Summary
 (println)
