@@ -46,7 +46,8 @@ bb run-lib-tests medley/medley
 ## Key Constraints
 
 - Requires GraalVM EA builds with RuntimeClassLoading support
-- Java enums are broken in Crema (`enum.values()` NPE) — affects http-kit, cheshire, clj-yaml
-- `Class.forName` not dispatchable in Crema; the Clojure fork redirects to `RT.classForName`
+- Java enums were broken in Crema (`enum.values()` NPE) — fixed in ea17 (PR #13081)
+- `Class.forName` not dispatchable in Crema from runtime-loaded Java bytecode; the Clojure fork redirects to `RT.classForName` for Clojure code, but pure Java libraries (e.g. SnakeYAML) still hit this — [GH-13031](https://github.com/oracle/graal/issues/13031). This blocks clj-yaml (SnakeYAML calls `Class.forName`). When this is fixed upstream, retry clj-yaml with the `java.logging` module changes already in `build_native.clj`.
+- http-kit: `require` works, but starting a server crashes on `Selector.open()` (`java.nio.channels.Selector` not dispatchable). Would need `java.nio`/`java.nio.channels` preserved. No `Class.forName` usage in http-kit's Java code, so may work once NIO packages are preserved.
 - Some tests are skipped per-library due to Crema limitations (see `skip-tests` and `skip-namespaces` in `bb/run_lib_tests.clj`)
 - The binary is ~300MB due to preserved packages and Crema interpreter

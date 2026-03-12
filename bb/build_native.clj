@@ -14,7 +14,7 @@
          "--initialize-at-run-time=com.sun.tools.javac.file.Locations,jdk.internal.jrtfs.SystemImage"
          "--initialize-at-build-time=clojure,cream,org.xml.sax,com.sun.tools.doclint,com.sun.tools.javac.parser.Tokens$TokenKind,com.sun.tools.javac.parser.Tokens$Token$Tag"
          "--features=ClojureFeature,clj_easy.graal_build_time.InitClojureClasses"
-         "--add-modules=java.xml"
+         "--add-modules=java.xml,java.logging"
          "-H:+UnlockExperimentalVMOptions"
          "-H:Name=cream"
          "-H:+RuntimeClassLoading"
@@ -26,6 +26,7 @@
          "-H:Preserve=package=java.lang.reflect"
          "-H:Preserve=package=java.util"
          "-H:Preserve=package=java.util.concurrent"
+         "-H:Preserve=module=java.logging"
          (str "-Djava.home=" (System/getenv "GRAALVM_HOME"))
          "-J-Djava.file.encoding=UTF-8"
          "-Djava.file.encoding=UTF-8"

@@ -1579,6 +1579,13 @@
   "allPublicConstructors" : true,
   "allPublicFields" : true
 }, {
+  "name" : "java.util.logging.Logger",
+  "allPublicMethods" : true,
+  "allPublicConstructors" : true,
+  "allPublicFields" : true
+}, {
+  "name" : "[Ljava.util.logging.Logger;"
+}, {
   "name" : "java.util.WeakHashMap",
   "allPublicMethods" : true,
   "allPublicConstructors" : true,

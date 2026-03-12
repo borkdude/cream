@@ -130,9 +130,7 @@ filesystem). Pure Clojure code works without `JAVA_HOME`.
 - Requires a lightly patched Clojure fork (minor workarounds for Crema
   quirks in `RT.java`, `Var.java`, and `Compiler.java`,
   [details](doc/technical.md#fork-changes))
-- Java enum support broken ([oracle/graal#13034](https://github.com/oracle/graal/issues/13034):
-  `enum.values()` and `EnumMap` crash in Crema's interpreter, affects
-  http-kit, cheshire, clj-yaml)
+- Java enum support fixed in GraalVM ea17 ([oracle/graal#13034](https://github.com/oracle/graal/issues/13034))
 - `Class.forName` not dispatchable ([oracle/graal#13031](https://github.com/oracle/graal/issues/13031):
   GraalVM inlines `Class.forName` substitutions at call sites, so Crema's
   interpreter can't dispatch to it; the Clojure fork redirects to
@@ -228,13 +226,14 @@ Libraries are tested against the cream binary using `bb run-lib-tests`.
 | [prismatic/schema](https://github.com/plumatic/schema) | :white_check_mark: | Works | |
 | [instaparse](https://github.com/Engelberg/instaparse) | :white_check_mark: | Works | |
 | [flatland/useful](https://github.com/flatland/useful) | | Works | |
-| [http-kit](https://github.com/http-kit/http-kit) | | Fails | Enum `values()` NPE in Crema |
-| [cheshire](https://github.com/dakrone/cheshire) | | Fails | Jackson enum `values()` NPE in Crema |
-| [clj-yaml](https://github.com/clj-commons/clj-yaml) | | Fails | SnakeYaml enum NPE in Crema |
+| [cheshire](https://github.com/dakrone/cheshire) | :white_check_mark: | Works | Enum fix in ea17 |
+| [Jsoup](https://jsoup.org/) | | Works | HTML parsing |
+| [http-kit](https://github.com/http-kit/http-kit) | | Partial | `require` works, server crashes on `Selector.open()` (needs `java.nio.channels` preserved) |
+| [clj-yaml](https://github.com/clj-commons/clj-yaml) | | Blocked | `Class.forName` in SnakeYAML ([GH-13031](https://github.com/oracle/graal/issues/13031)) |
 
 Pure Clojure libraries generally work. Libraries using Java interop work when
-the relevant packages are preserved. Libraries using Java enums fail due to a
-Crema bug ([known limitation](#known-limitations)).
+the relevant packages are preserved. Libraries calling `Class.forName` from Java
+bytecode are blocked by [GH-13031](https://github.com/oracle/graal/issues/13031).
 
 ## Building from source
 
@@ -255,8 +254,8 @@ Requires a GraalVM EA build with RuntimeClassLoading support.
 
 - Fully standalone binary: investigate whether JRT metadata can be bundled
   in the binary to eliminate the `JAVA_HOME` requirement for Java interop
-- Enum support: blocked on [oracle/graal#13034](https://github.com/oracle/graal/issues/13034),
-  would unblock http-kit, cheshire, clj-yaml
+- `Class.forName` fix: blocked on [oracle/graal#13031](https://github.com/oracle/graal/issues/13031),
+  would unblock clj-yaml
 - Reduce binary size: currently ~300MB due to preserved packages and
   Crema interpreter overhead
 - nREPL support: enable interactive development with editor integration
