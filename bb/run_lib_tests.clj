@@ -56,8 +56,10 @@
     :run-from-clone true}
    'cheshire/cheshire
    {:git-url "https://github.com/dakrone/cheshire"
+    :git-tag "5.13.0"
     :test-dirs ["test"]
-    :ns-regex "cheshire.test.*"}})
+    :ns-regex "cheshire.test.*"
+    :run-from-clone true}})
 
 ;; Specific test vars to skip per library.
 ;; Each entry is a fully qualified var that gets :skip-cream metadata.
@@ -139,12 +141,14 @@
         :when (not (skip-libs lib-name))
         :let [lib-str (str lib-name)]
         :when (or (nil? filter-lib) (= filter-lib lib-str))]
-  (if-let [{:keys [git-url test-dirs run-from-clone ns-regex]} (get clone-libs lib-name)]
+  (if-let [{:keys [git-url git-tag test-dirs run-from-clone ns-regex]} (get clone-libs lib-name)]
     ;; Maven lib with separate clone for tests
     (let [clone-dir (str (fs/file (fs/temp-dir) (str "cream-test-" (name lib-name))))
           _ (when-not (fs/exists? clone-dir)
               (println (format "Cloning %s..." lib-str))
-              (p/shell "git" "clone" "--depth" "1" git-url clone-dir))
+              (apply p/shell "git" "clone" "--depth" "1"
+                     (concat (when git-tag ["-b" git-tag])
+                             [git-url clone-dir])))
           test-paths (mapv #(str (fs/file clone-dir %)) test-dirs)]
       (run-lib-test {:lib-name lib-name
                      :lib-str lib-str
