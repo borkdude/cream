@@ -53,7 +53,11 @@
    {:git-url "https://github.com/Engelberg/instaparse"
     :test-dirs ["test"]
     ;; defparser macro reads grammar files via relative paths
-    :run-from-clone true}})
+    :run-from-clone true}
+   'cheshire/cheshire
+   {:git-url "https://github.com/dakrone/cheshire"
+    :test-dirs ["test"]
+    :ns-regex "cheshire.test.*"}})
 
 ;; Specific test vars to skip per library.
 ;; Each entry is a fully qualified var that gets :skip-cream metadata.
@@ -90,9 +94,13 @@
    'org.clojure/core.async
    ["clojure.core.async-test"
     "clojure.core.async.ioc-macros-test"
-    "clojure.core.pipeline-test"]})
+    "clojure.core.pipeline-test"]
+   ;; Excluded by cheshire's own test-selectors; defspec macro
+   ;; implicitly evals clojure.data.generators symbols without requiring it
+   'cheshire/cheshire
+   ["cheshire.test.generative"]})
 
-(defn- run-lib-test [{:keys [lib-name lib-str test-paths work-dir]}]
+(defn- run-lib-test [{:keys [lib-name lib-str test-paths work-dir ns-regex-override]}]
   (let [full-cp (str lib-cp fs/path-separator (str/join fs/path-separator test-paths))
         skips (get skip-tests lib-name)
         skip-nses (get skip-namespaces lib-name)
@@ -102,13 +110,17 @@
                         (let [[ns-str] (str/split v #"/")]
                           (format "(do (require '%s) (alter-meta! #'%s assoc :skip-cream true) nil)"
                                   ns-str v)))))
+        default-regex ".*-test$|.*test-.*|.*test$"
+        base-regex (or ns-regex-override default-regex)
         ;; Build ns regex that excludes skipped namespaces
         ns-regex (if (seq skip-nses)
                    (let [exclude-pattern (str "(?!" (str/join "|" (map #(str/replace % "." "\\.") skip-nses)) "$)")]
-                     (str exclude-pattern "(.*-test$|.*test-.*|.*test$)"))
-                   ".*-test$|.*test-.*|.*test$")
-        cream-path (str (fs/absolutize "cream"))
-        cmd (cond-> [cream-path "-Scp" full-cp "-M"]
+                     (str exclude-pattern "(" base-regex ")"))
+                   base-regex)
+        cream-cmd (if (= "false" (System/getenv "CREAM_NATIVE"))
+                    ["java" "-jar" (str (fs/absolutize "target/cream-1.0.0-standalone.jar"))]
+                    [(str (fs/absolutize "cream"))])
+        cmd (cond-> (into cream-cmd ["-Scp" full-cp "-M"])
               skip-expr (into ["-e" skip-expr])
               true      (into (concat ["-m" "cognitect.test-runner"
                                        "-r" ns-regex
@@ -127,7 +139,7 @@
         :when (not (skip-libs lib-name))
         :let [lib-str (str lib-name)]
         :when (or (nil? filter-lib) (= filter-lib lib-str))]
-  (if-let [{:keys [git-url test-dirs run-from-clone]} (get clone-libs lib-name)]
+  (if-let [{:keys [git-url test-dirs run-from-clone ns-regex]} (get clone-libs lib-name)]
     ;; Maven lib with separate clone for tests
     (let [clone-dir (str (fs/file (fs/temp-dir) (str "cream-test-" (name lib-name))))
           _ (when-not (fs/exists? clone-dir)
@@ -137,7 +149,8 @@
       (run-lib-test {:lib-name lib-name
                      :lib-str lib-str
                      :test-paths test-paths
-                     :work-dir (when run-from-clone clone-dir)}))
+                     :work-dir (when run-from-clone clone-dir)
+                     :ns-regex-override ns-regex}))
     ;; Standard git dep
     (let [git-dir (str (gitlibs-dir lib-name (:git/sha coord)))
           test-dirs (find-test-dirs git-dir)]

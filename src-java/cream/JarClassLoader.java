@@ -10,6 +10,7 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.Collections;
 
 /**
  * A classloader that can find resources and classes in JAR files and
@@ -22,8 +23,10 @@ public class JarClassLoader extends DynamicClassLoader {
 
     private final List<JarFile> jarFiles = new ArrayList<>();
     private final List<Path> dirPaths = new ArrayList<>();
-    // Maps resource name -> JarFile for fast lookup
+    // Maps resource name -> first JarFile for fast lookup
     public final Map<String, JarFile> resourceIndex = new HashMap<>();
+    // Maps resource name -> all JarFiles containing it
+    private final Map<String, List<JarFile>> resourceIndexAll = new HashMap<>();
 
     public JarClassLoader(String[] paths, ClassLoader parent) {
         super(parent);
@@ -40,6 +43,7 @@ public class JarClassLoader extends DynamicClassLoader {
                         JarEntry entry = entries.nextElement();
                         if (!entry.isDirectory()) {
                             resourceIndex.putIfAbsent(entry.getName(), jf);
+                            resourceIndexAll.computeIfAbsent(entry.getName(), k -> new ArrayList<>()).add(jf);
                         }
                     }
                 } catch (IOException e) {
@@ -100,6 +104,26 @@ public class JarClassLoader extends DynamicClassLoader {
             }
         }
         return super.getResource(name);
+    }
+
+    @Override
+    public Enumeration<URL> findResources(String name) throws IOException {
+        List<URL> urls = new ArrayList<>();
+        // Check directories
+        for (Path dir : dirPaths) {
+            Path file = dir.resolve(name);
+            if (Files.isRegularFile(file)) {
+                urls.add(file.toUri().toURL());
+            }
+        }
+        // Check JARs
+        List<JarFile> jfs = resourceIndexAll.get(name);
+        if (jfs != null) {
+            for (JarFile jf : jfs) {
+                urls.add(new URL("jar:file:" + jf.getName() + "!/" + name));
+            }
+        }
+        return Collections.enumeration(urls);
     }
 
     @Override

@@ -45,4 +45,6 @@
                         {:git/url "https://github.com/plumatic/schema"
                          :git/sha "74a1ecdb645d3f43b405a27e2b70f72db861b7ca"}
                         instaparse/instaparse
-                        {:mvn/version "1.5.0"}}}}}
+                        {:mvn/version "1.5.0"}
+                        cheshire/cheshire
+                        {:mvn/version "5.13.0"}}}}}

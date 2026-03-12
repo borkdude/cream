@@ -142,7 +142,26 @@
         _ (when cp-str
             (let [paths (.split ^String cp-str (System/getProperty "path.separator"))
                   cl (JarClassLoader. paths (.getContextClassLoader (Thread/currentThread)))]
-              (.setContextClassLoader (Thread/currentThread) cl)))
+              (.setContextClassLoader (Thread/currentThread) cl)
+              ;; Load data_readers.clj(c) from library JARs — Clojure's RT
+              ;; scans these at init time, before our JarClassLoader exists.
+              ;; Values must be Vars (not symbols), matching clojure.core/load-data-reader-file.
+              (let [urls (enumeration-seq (.getResources cl "data_readers.clj"))
+                    urlsc (enumeration-seq (.getResources cl "data_readers.cljc"))
+                    raw (into {}
+                          (mapcat (fn [^java.net.URL url]
+                                    (with-open [rdr (java.io.PushbackReader.
+                                                      (java.io.InputStreamReader.
+                                                        (.openStream url)))]
+                                      (clojure.edn/read rdr))))
+                          (concat urls urlsc))
+                    readers (into {}
+                              (map (fn [[tag sym]]
+                                     [tag (intern (create-ns (symbol (namespace sym)))
+                                                  (symbol (name sym)))]))
+                              raw)]
+                (when (seq readers)
+                  (alter-var-root #'*data-readers* merge readers)))))
         [flag & main-args] remaining]
     (cond
       (= "-M" flag)
