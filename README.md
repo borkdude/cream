@@ -271,3 +271,7 @@ Distributed under the EPL License. See [LICENSE](LICENSE).
 
 This project contains code from:
 - [Clojure](https://clojure.org), which is licensed under the same EPL License.
+
+## Links
+
+[![Hypercommit](https://img.shields.io/badge/Hypercommit-DB2475)](https://hypercommit.com/cream)
