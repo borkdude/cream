@@ -136,7 +136,7 @@ filesystem). Pure Clojure code works without `JAVA_HOME`.
   interpreter can't dispatch to it; the Clojure fork redirects to
   `RT.classForName` as a workaround, but Java `.class` files calling
   `Class.forName` directly will still fail)
-- Large binary (~191MB, includes Crema interpreter and preserved packages)
+- Large binary (~195MB, includes Crema interpreter and preserved packages)
 - Crema is EA (GraalVM's RuntimeClassLoading is experimental and only
   available in [EA builds](https://github.com/graalvm/oracle-graalvm-ea-builds))
 
@@ -151,7 +151,7 @@ workarounds.
 | Library loading | Any library from JARs at runtime | Any library (with built-in classes, SCI/deftype limitations) |
 | Java interop | Full (runtime class loading) | Limited to compiled-in classes |
 | Startup | ~20ms | ~20ms |
-| Binary size | ~191MB | ~70MB |
+| Binary size | ~195MB | ~70MB |
 | Standalone | Mostly (may need `JAVA_HOME` for Java interop) | Yes |
 | Loop 10M iterations* | ~720ms | ~270ms |
 | Compile time (GitHub Actions, linux-amd64) | ~10min | ~3min |
@@ -230,7 +230,7 @@ Libraries are tested against the cream binary using `bb run-lib-tests`.
 | [clj-yaml](https://github.com/clj-commons/clj-yaml) | :white_check_mark: | Works | Fixed in ea20 (`java.lang` preserve) |
 | [nextjournal/markdown](https://github.com/nextjournal/markdown) | :white_check_mark: | Works | Lambda fix in ea20 + `java.lang` preserve |
 | [Jsoup](https://jsoup.org/) | | Works | HTML parsing |
-| [http-kit](https://github.com/http-kit/http-kit) | | Partial | `require` works, server crashes on `Selector.open()` (needs `java.nio.channels` preserved) |
+| [http-kit](https://github.com/http-kit/http-kit) | | Works | Server + client including HTTPS |
 
 Pure Clojure libraries generally work. Libraries using Java interop work when
 the relevant packages are preserved.
@@ -254,7 +254,7 @@ Requires a GraalVM EA build with RuntimeClassLoading support.
 
 - Fully standalone binary: investigate whether JRT metadata can be bundled
   in the binary to eliminate the `JAVA_HOME` requirement for Java interop
-- Reduce binary size: currently ~191MB due to preserved packages and
+- Reduce binary size: currently ~195MB due to preserved packages and
   Crema interpreter overhead
 - nREPL support: enable interactive development with editor integration
 

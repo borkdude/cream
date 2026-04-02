@@ -27,6 +27,12 @@
          "-H:Preserve=package=java.lang.reflect"
          "-H:Preserve=package=java.util"
          "-H:Preserve=package=java.util.concurrent"
+         "-H:Preserve=package=java.util.concurrent.atomic"
+         "-H:Preserve=package=java.net"
+         "-H:Preserve=package=javax.net.ssl"
+         "-H:Preserve=package=java.nio"
+         "-H:Preserve=package=java.nio.channels"
+         "-H:Preserve=package=java.nio.channels.spi"
          "-H:Preserve=module=java.logging"
          (str "-Djava.home=" (System/getenv "GRAALVM_HOME"))
          "-J-Djava.file.encoding=UTF-8"

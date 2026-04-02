@@ -45,7 +45,8 @@
 ;; Libraries that are deps but not test targets
 (def skip-libs #{'io.github.cognitect-labs/test-runner
                  'org.clojure/test.check
-                 'nubank/matcher-combinators})
+                 'nubank/matcher-combinators
+                 'http-kit/http-kit})
 
 ;; Maven-only libs that need a separate git clone for tests.
 ;; These use project.clj (no deps.edn) so can't be git deps.
@@ -180,6 +181,23 @@
           (run-lib-test {:lib-name lib-name
                          :lib-str lib-str
                          :test-paths test-paths}))))))
+
+;; Smoke tests for libraries that don't have simple test suites
+(when (or (nil? filter-lib) (= filter-lib "http-kit/http-kit"))
+  (println "\nSmoke testing http-kit/http-kit")
+  (let [cream-cmd (if (= "false" (System/getenv "CREAM_NATIVE"))
+                    ["java" "-jar" (str (fs/absolutize "target/cream-1.0.0-standalone.jar"))]
+                    [(str (fs/absolutize "cream"))])
+        cmd (into cream-cmd ["-Scp" lib-cp "-M" "-e"
+                             "(require '[org.httpkit.server :as srv] '[org.httpkit.client :as http])
+                              (let [s (srv/run-server (fn [req] {:status 200 :body \"ok\"}) {:port 18099})]
+                                (let [resp @(http/get \"http://localhost:18099\")]
+                                  (assert (= 200 (:status resp)) \"http-kit smoke test failed\"))
+                                (s))
+                              (println \"http-kit smoke test passed\")"])
+        proc (apply p/process {:inherit true} cmd)
+        exit-code (:exit @proc)]
+    (swap! results conj {:lib "http-kit/http-kit" :status (if (zero? exit-code) :pass :fail)})))
 
 ;; Summary
 (println)
