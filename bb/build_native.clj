@@ -21,6 +21,7 @@
          "-H:ConfigurationFileDirectories=."
          "-H:IncludeResources=clojure/.*"
          ;; Minimal Preserve set — verified by bb/test_preserve.clj
+         "-H:Preserve=package=java.lang"
          "-H:Preserve=package=clojure.lang"
          "-H:Preserve=package=java.lang.invoke"
          "-H:Preserve=package=java.lang.reflect"

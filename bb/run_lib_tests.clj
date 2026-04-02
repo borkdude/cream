@@ -44,7 +44,8 @@
 
 ;; Libraries that are deps but not test targets
 (def skip-libs #{'io.github.cognitect-labs/test-runner
-                 'org.clojure/test.check})
+                 'org.clojure/test.check
+                 'nubank/matcher-combinators})
 
 ;; Maven-only libs that need a separate git clone for tests.
 ;; These use project.clj (no deps.edn) so can't be git deps.

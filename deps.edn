@@ -47,4 +47,8 @@
                         instaparse/instaparse
                         {:mvn/version "1.5.0"}
                         cheshire/cheshire
-                        {:mvn/version "5.13.0"}}}}}
+                        {:mvn/version "5.13.0"}
+                       io.github.nextjournal/markdown
+                        {:git/tag "v0.7.222" :git/sha "ee9da78b347246260dbe66412336aafe20397fa3"}
+                       nubank/matcher-combinators
+                        {:mvn/version "3.9.1"}}}}}
