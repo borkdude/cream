@@ -84,6 +84,10 @@
       "clj-yaml.core-test/unsafe-allow-test"]}
     (when (fs/windows?)
       {;; \r\n line ending mismatches on Windows
+       'cheshire/cheshire
+       ["cheshire.test.core/t-pretty-print"
+        "cheshire.test.core/t-custom-pretty-print-with-defaults"
+        "cheshire.test.custom/t-pretty-print"]
        'org.clojure/data.json
        ["clojure.data.json-test/pretty-print-nonescaped-unicode"]
        'lambdaisland/deep-diff2
