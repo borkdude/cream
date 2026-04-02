@@ -60,7 +60,11 @@
     :git-tag "5.13.0"
     :test-dirs ["test"]
     :ns-regex "cheshire.test.*"
-    :run-from-clone true}})
+    :run-from-clone true}
+   'clj-commons/clj-yaml
+   {:git-url "https://github.com/clj-commons/clj-yaml"
+    :git-tag "v1.0.27"
+    :test-dirs ["test"]}})
 
 ;; Specific test vars to skip per library.
 ;; Each entry is a fully qualified var that gets :skip-cream metadata.
@@ -71,7 +75,13 @@
      ["hiccup.util_test/test-url-encode"]
      ;; stest/check generators StackOverflow in Crema
      'org.clojure/data.json
-     ["clojure.data.json-gen-test/roundtrip"]}
+     ["clojure.data.json-gen-test/roundtrip"]
+     ;; Parses 400k-line YAML string — too slow in Crema interpreter;
+     ;; unsafe-allow-test expects SnakeYAML arbitrary class construction
+     ;; which behaves differently in Crema
+     'clj-commons/clj-yaml
+     ["clj-yaml.core-test/code-point-limit-works"
+      "clj-yaml.core-test/unsafe-allow-test"]}
     (when (fs/windows?)
       {;; \r\n line ending mismatches on Windows
        'org.clojure/data.json
