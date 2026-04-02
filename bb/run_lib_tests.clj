@@ -111,7 +111,6 @@
   {;; ForkJoinPool segfault in Crema under heavy concurrent dispatch
    'org.clojure/core.async
    ["clojure.core.async-test"
-    "clojure.core.async.ioc-macros-test"
     "clojure.core.pipeline-test"]
    ;; Excluded by cheshire's own test-selectors; defspec macro
    ;; implicitly evals clojure.data.generators symbols without requiring it
