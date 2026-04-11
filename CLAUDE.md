@@ -52,4 +52,5 @@ bb run-lib-tests medley/medley
 - http-kit: fully works (server + client including HTTPS) after adding preserves for `java.net`, `javax.net.ssl`, `java.nio`, `java.nio.channels`, `java.nio.channels.spi`, and `java.util.concurrent.atomic`.
 - `Preserve=package=java.lang` was added in ea20 to fix `StringConcat` generated classes crashing with "Method not compiled". Without it, any runtime-loaded Java code using string concatenation (`+` on strings, which compiles to `invokedynamic makeConcatWithConstants`) would segfault. This fixed both clj-yaml and commonmark-java's inline parsing.
 - Some tests are skipped per-library due to Crema limitations (see `skip-tests` and `skip-namespaces` in `bb/run_lib_tests.clj`)
-- The binary is ~195MB due to preserved packages and Crema interpreter
+- The binary is ~175MB due to preserved packages and Crema interpreter (shrunk from ~195MB on ea20 to ~175MB on ea21)
+- ForkJoinPool / virtual thread segfault still reproduces on ea21 (jvmci-25.1-b17) — see `repro/forkjoin/`. Blocks the skipped core.async namespaces.
