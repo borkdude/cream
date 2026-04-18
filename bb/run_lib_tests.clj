@@ -108,14 +108,20 @@
 ;; Test namespaces to exclude per library (segfault in Crema).
 ;; These are excluded from the test-runner's namespace regex.
 (def skip-namespaces
-  {;; ForkJoinPool segfault in Crema under heavy concurrent dispatch
-   'org.clojure/core.async
-   ["clojure.core.async-test"
-    "clojure.core.pipeline-test"]
-   ;; Excluded by cheshire's own test-selectors; defspec macro
-   ;; implicitly evals clojure.data.generators symbols without requiring it
-   'cheshire/cheshire
-   ["cheshire.test.generative"]})
+  (merge-with into
+    {;; ForkJoinPool segfault in Crema under heavy concurrent dispatch
+     'org.clojure/core.async
+     ["clojure.core.async-test"
+      "clojure.core.pipeline-test"]
+     ;; Excluded by cheshire's own test-selectors; defspec macro
+     ;; implicitly evals clojure.data.generators symbols without requiring it
+     'cheshire/cheshire
+     ["cheshire.test.generative"]}
+    (when (fs/windows?)
+      {;; TODO: "Fatal error: guarantee failed" on Windows in EA22 — passes on Linux.
+       ;; Likely a native-image internal assertion in the ioc state-machine code path.
+       'org.clojure/core.async
+       ["clojure.core.async.ioc-macros-test"]})))
 
 (defn- run-lib-test [{:keys [lib-name lib-str test-paths work-dir ns-regex-override]}]
   (let [full-cp (str lib-cp fs/path-separator (str/join fs/path-separator test-paths))
