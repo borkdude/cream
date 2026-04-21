@@ -108,12 +108,10 @@
 ;; Test namespaces to exclude per library (segfault in Crema).
 ;; These are excluded from the test-runner's namespace regex.
 (def skip-namespaces
-  {;; ForkJoinPool segfault in Crema under heavy concurrent dispatch.
-   ;; TODO ioc-macros-test is flaky on EA22: segfaults on Linux, "guarantee failed" on Windows.
+  {;; ForkJoinPool segfault in Crema under heavy concurrent dispatch
    'org.clojure/core.async
    ["clojure.core.async-test"
-    "clojure.core.pipeline-test"
-    "clojure.core.async.ioc-macros-test"]
+    "clojure.core.pipeline-test"]
    ;; Excluded by cheshire's own test-selectors; defspec macro
    ;; implicitly evals clojure.data.generators symbols without requiring it
    'cheshire/cheshire
