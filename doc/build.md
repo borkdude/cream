@@ -28,9 +28,10 @@ gh release list --repo graalvm/oracle-graalvm-ea-builds --limit 5
 Download and extract (macOS aarch64 example):
 
 ```sh
-# Pick the latest jdk-25e1 tag from the list above, e.g. jdk-25e1-25.0.2-ea.16
-TAG=jdk-25e1-25.0.2-ea.16
-VERSION=25.0.2-ea.16
+# Pick the latest jdk-25e1 tag from the list above, e.g. jdk-25e1-25.0.2-ea.25
+TAG=jdk-25e1-25.0.2-ea.25
+VERSION=25.0.2-ea.25
+EA=ea.25
 
 cd ~/Downloads
 gh release download "$TAG" \
@@ -40,10 +41,12 @@ tar xzf "graalvm-jdk-25e1-${VERSION}_macos-aarch64_bin.tar.gz"
 ```
 
 The tarball extracts to a directory like `graalvm-25.1.0-dev+10.1/` (the
-directory name does not match the tarball name). Find it with:
+directory name does not match the tarball name and is the same across EA
+releases, so successive extracts overwrite each other). Rename it with the
+EA suffix so multiple builds can coexist and `GRAALVM_HOME` is unambiguous:
 
 ```sh
-ls -ltr ~/Downloads/ | grep graalvm | tail -3
+mv graalvm-25.1.0-dev+10.1 "graalvm-25.1.0-dev+10.1-${EA}"
 ```
 
 For Linux x86_64, replace `macos-aarch64` with `linux-amd64` in the pattern
@@ -53,20 +56,20 @@ Verify:
 
 ```sh
 # macOS
-~/Downloads/graalvm-25.1.0-dev+10.1/Contents/Home/bin/native-image --version
+~/Downloads/graalvm-25.1.0-dev+10.1-${EA}/Contents/Home/bin/native-image --version
 
 # Linux
-~/Downloads/graalvm-25.1.0-dev+10.1/bin/native-image --version
+~/Downloads/graalvm-25.1.0-dev+10.1-${EA}/bin/native-image --version
 ```
 
 ## 3. Build the native binary
 
 ```sh
 # macOS
-GRAALVM_HOME=~/Downloads/graalvm-25.1.0-dev+10.1/Contents/Home bb build-native
+GRAALVM_HOME=~/Downloads/graalvm-25.1.0-dev+10.1-ea.25/Contents/Home bb build-native
 
 # Linux
-GRAALVM_HOME=~/Downloads/graalvm-25.1.0-dev+10.1 bb build-native
+GRAALVM_HOME=~/Downloads/graalvm-25.1.0-dev+10.1-ea.25 bb build-native
 ```
 
 This builds the uberjar first, then runs `native-image` with Crema flags.
@@ -83,7 +86,7 @@ Each EA release is built from a specific `oracle/graal` commit. Two ways to find
 2. **From the `release` file** inside the extracted GraalVM directory:
    ```sh
    # macOS
-   cat ~/Downloads/graalvm-25.1.0-dev+10.1/Contents/Home/release | grep compiler
+   cat ~/Downloads/graalvm-25.1.0-dev+10.1-ea.25/Contents/Home/release | grep compiler
    # Look for commit.rev in the SOURCE or COMMIT_INFO fields
    ```
 
