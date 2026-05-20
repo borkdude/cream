@@ -72,7 +72,6 @@ jobs:
         run: |
           echo "Using GRAALVM_EA_TAG=$GRAALVM_EA_TAG"
           java -version
-          native-image --version
 
       - name: Clone and install Clojure fork
         shell: bash
