@@ -14,27 +14,65 @@ jobs:
             arch: amd64
             platform: linux
             ext: ""
+            graalvm_asset: graalvm-jdk-25e1-25.0.3-ea.28_linux-x64_bin.tar.gz
           - os: macos-latest
             arch: aarch64
             platform: macos
             ext: ""
+            graalvm_asset: graalvm-jdk-25e1-25.0.3-ea.28_macos-aarch64_bin.tar.gz
           - os: windows-latest
             arch: amd64
             platform: windows
             ext: ".exe"
+            graalvm_asset: graalvm-jdk-25e1-25.0.3-ea.28_windows-x64_bin.zip
 
     runs-on: ${{ matrix.os }}
+
+    env:
+      GRAALVM_EA_TAG: jdk-25e1-25.0.3-ea.28
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up GraalVM EA
-        uses: graalvm/setup-graalvm@v1
-        with:
-          java-version: '25e1-ea'
-          distribution: 'graalvm'
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Download GraalVM EA28 (unix)
+        if: matrix.platform != 'windows'
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/graalvm"
+          curl -L --fail -o "$RUNNER_TEMP/graalvm.tar.gz" \
+            "https://github.com/graalvm/oracle-graalvm-ea-builds/releases/download/${GRAALVM_EA_TAG}/${{ matrix.graalvm_asset }}"
+          tar -xzf "$RUNNER_TEMP/graalvm.tar.gz" -C "$RUNNER_TEMP/graalvm" --strip-components=1
+          # macOS tarball has Contents/Home structure
+          if [ -d "$RUNNER_TEMP/graalvm/Contents/Home" ]; then
+            echo "JAVA_HOME=$RUNNER_TEMP/graalvm/Contents/Home" >> "$GITHUB_ENV"
+            echo "$RUNNER_TEMP/graalvm/Contents/Home/bin" >> "$GITHUB_PATH"
+          else
+            echo "JAVA_HOME=$RUNNER_TEMP/graalvm" >> "$GITHUB_ENV"
+            echo "$RUNNER_TEMP/graalvm/bin" >> "$GITHUB_PATH"
+          fi
+
+      - name: Download GraalVM EA28 (windows)
+        if: matrix.platform == 'windows'
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/graalvm"
+          curl -L --fail -o "$RUNNER_TEMP/graalvm.zip" \
+            "https://github.com/graalvm/oracle-graalvm-ea-builds/releases/download/${GRAALVM_EA_TAG}/${{ matrix.graalvm_asset }}"
+          7z x "$RUNNER_TEMP/graalvm.zip" -o"$RUNNER_TEMP/graalvm" >/dev/null
+          # zip has single top-level dir
+          home=$(find "$RUNNER_TEMP/graalvm" -maxdepth 1 -mindepth 1 -type d | head -n1)
+          echo "JAVA_HOME=$home" >> "$GITHUB_ENV"
+          echo "$home/bin" >> "$GITHUB_PATH"
+
+      - name: Verify GraalVM version
+        shell: bash
+        run: |
+          echo "Using GRAALVM_EA_TAG=$GRAALVM_EA_TAG"
+          java -version
+          native-image --version
 
       - name: Clone and install Clojure fork
         shell: bash
