@@ -133,6 +133,13 @@
         (into-array Object [(into-array String (vec args))])))))
 
 (defn -main [& args]
+  ;; EA28 / Crema runtime-inits jdk.internal.jimage.ImageReaderFactory.
+  ;; Its <clinit> reads java.home, which is null in the native binary,
+  ;; causing NPE on the first ClassLoader.getResources(...) walk to
+  ;; BootLoader. Set a non-null placeholder; actual JRT access goes
+  ;; through Target_jdk_internal_jrtfs_SystemImage.findHome.
+  (when (nil? (System/getProperty "java.home"))
+    (System/setProperty "java.home" "/"))
   ;; On Windows, *out* captured at build time has the wrong encoding.
   ;; https://github.com/babashka/babashka/issues/1009
   ;; https://github.com/oracle/graal/issues/12249
