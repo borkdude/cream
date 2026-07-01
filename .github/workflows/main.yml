@@ -14,28 +14,28 @@ jobs:
             arch: amd64
             platform: linux
             ext: ""
-            graalvm_asset: graalvm-jdk-25e1-25.0.3-ea.28_linux-x64_bin.tar.gz
+            graalvm_asset: graalvm-jdk-25i2-25.0.3-ea.01_linux-x64_bin.tar.gz
           - os: macos-latest
             arch: aarch64
             platform: macos
             ext: ""
-            graalvm_asset: graalvm-jdk-25e1-25.0.3-ea.28_macos-aarch64_bin.tar.gz
+            graalvm_asset: graalvm-jdk-25i2-25.0.3-ea.01_macos-aarch64_bin.tar.gz
           - os: windows-latest
             arch: amd64
             platform: windows
             ext: ".exe"
-            graalvm_asset: graalvm-jdk-25e1-25.0.3-ea.28_windows-x64_bin.zip
+            graalvm_asset: graalvm-jdk-25i2-25.0.3-ea.01_windows-x64_bin.zip
 
     runs-on: ${{ matrix.os }}
 
     env:
-      GRAALVM_EA_TAG: jdk-25e1-25.0.3-ea.28
+      GRAALVM_EA_TAG: jdk-25i2-25.0.3-ea.01
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Download GraalVM EA28 (unix)
+      - name: Download GraalVM EA (unix)
         if: matrix.platform != 'windows'
         shell: bash
         run: |
@@ -53,7 +53,7 @@ jobs:
             echo "$RUNNER_TEMP/graalvm/bin" >> "$GITHUB_PATH"
           fi
 
-      - name: Download GraalVM EA28 (windows)
+      - name: Download GraalVM EA (windows)
         if: matrix.platform == 'windows'
         shell: bash
         run: |

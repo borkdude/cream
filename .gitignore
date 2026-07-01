@@ -1,4 +1,5 @@
 target
 /cream
+/*.dylib
 .DS_Store
 classes
