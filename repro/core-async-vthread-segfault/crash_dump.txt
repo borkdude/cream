@@ -1,0 +1,810 @@
+
+[ [ SegfaultHandler caught a segfault in thread 0x000000012da04800 ] ]
+siginfo: si_signo: 10, si_code: 1, si_addr: 0x0000000341055c84 (heapBase + 1090870404)
+
+General purpose register values:
+  R0  0x00000003026fe898 points into the image heap (aligned chunk, read-only)
+    is an object of type java.lang.Long
+  R1  0x0000000300000000 is the heap base
+  R2  0x0000000000000001 is an unknown value
+  R3  0x000000000820ab90 is the encoded object header for an object of type java.lang.Long
+  R4  0x0000000341055c80 is an unknown value
+  R5  0x0000000000000001 is an unknown value
+  R6  0x00000000000002c8 is an unknown value
+  R7  0x0000000000000000 
+  R8  0x000000000000002b is an unknown value
+  R9  0x000000016d4e02d0 points into the stack for thread 0x000000012da04800
+  R10 0x000000016d2de000 points into the stack for thread 0x000000012da04800
+  R11 0x0000000000000001 is an unknown value
+  R12 0x00000000000000b0 is an unknown value
+  R13 0x0000000000000002 Exception in thread "" is an unknown value
+ java.lang.IllegalMonitorStateException
+	at org.graalvm.nativeimage.builder/com.oracle.svm.core.monitor.JavaMonitor.tryRelease(JavaMonitor.java:198)
+	at org.graalvm.nativeimage.builder/com.oracle.svm.core.monitor.JavaMonitorQueuedSynchronizer.release(JavaMonitorQueuedSynchronizer.java:492)
+	at org.graalvm.nativeimage.builder/com.oracle.svm.core.monitor.JavaMonitor.monitorExit(JavaMonitor.java:83)
+	at com.oracle.svm.svm_enterprise/com.oracle.svm.enterprise.core.monitor.EnterpriseMonitorSupport.monitorExitImpl(EnterpriseMonitorSupport.java:123)
+	at org.graalvm.nativeimage.builder/com.oracle.svm.core.monitor.MultiThreadedMonitorSupport.monitorExit(MultiThreadedMonitorSupport.java:323)
+	at clojure.core.async.impl.dispatch$in_vthread_QMARK_.invoke(dispatch.clj:107)
+	at clojure.core.async$_GT__BANG_.invokeStatic(async.clj:250)
+ R14 0x0000000000000	at clojure.core.async$_GT__BANG_.doInvoke(async.clj:250)
+0	at clojure.lang.RestFn.invoke(RestFn.java:424)
+	at clojure.core.async$onto_chan_BANG_$fn__1089.invoke(async.clj:773)
+2b 	at clojure.lang.AFn.applyToHelper(AFn.java:152)
+is an unknown value
+  R15 0x00000000	at clojure.lang.AFn.applyTo(AFn.java:144)
+	at clojure.core$apply.invokeStatic(core.clj:667)
+	at clojure.core$with_bindings_STAR_.invokeStatic(core.clj:1983)
+	at clojure.core$with_bindings_STAR_.doInvoke(core.clj:1983)
+	at clojure.lang.RestFn.invoke(RestFn.java:428)
+	at clojure.lang.AFn.applyToHelper(AFn.java:156)
+	at clojure.lang.RestFn.applyTo(RestFn.java:135)
+	at clojure.core$apply.invokeStatic(core.clj:671)
+	at clojure.core$bound_fn_STAR_$fn__3199.doInvoke(core.clj:2013)
+	at clojure.lang.RestFn.invoke(RestFn.java:400)
+	at clojure.core.async$thread_call$returning_to_chan__1024$fn__1025.invoke(async.clj:571)
+	at clojure.lang.AFn.run(AFn.java:22)
+	at java.base@25.0.3/java.util.concurrent.ThreadPerTaskExecutor$TaskRunner.run(ThreadPerTaskExecutor.java:291)
+	at java.base@25.0.3/java.lang.Thread.runWith(Thread.java:1487)
+	at java.base@25.0.3/java.lang.VirtualThread.run(VirtualThread.java:460)
+	at java.base@25.0.3/java.lang.VirtualThread$VThreadContinuation$1.run(VirtualThread.java:252)
+Exception in thread "" java.lang.IllegalMonitorStateException
+	at org.graalvm.nativeimage.builder/com.oracle.svm.core.monitor.JavaMonitor.tryRelease(JavaMonitor.java:198)
+	at org.graalvm.nativeimage.builder/com.oracle.svm.core.monitor.JavaMonitorQueuedSynchronizer.release(JavaMonitorQueuedSynchronizer.java:492)
+	at org.graalvm.nativeimage.builder/com.oracle.svm.core.monitor.JavaMonitor.monitorExit(JavaMonitor.java:83)
+	at com.oracle.svm.svm_enterprise/com.oracle.svm.enterprise.core.monitor.EnterpriseMonitorSupport.monitorExitImpl(EnterpriseMonitorSupport.java:123)
+	at org.graalvm.nativeimage.builder/com.oracle.svm.core.monitor.MultiThreadedMonitorSupport.monitorExit(MultiThreadedMonitorSupport.java:323)
+	at clojure.core.async.impl.dispatch$in_vthread_QMARK_.invoke(dispatch.clj:107)
+	at clojure.core.async$_LT__BANG_.invokeStatic(async.clj:211)
+	at clojure.core.async$_LT__BANG_.doInvoke(async.clj:211)
+	at clojure.lang.RestFn.invoke(RestFn.java:411)
+	at user$eval1481$fn__1492.invoke(mini_repro.clj:15)
+	at clojure.lang.AFn.applyToHelper(AFn.java:152)
+	at clojure.lang.AFn.applyTo(AFn.java:144)
+	at clojure.core$apply.invokeStatic(core.clj:667)
+	at clojure.core$with_bindings_STAR_.invokeStatic(core.clj:1983)
+	at clojure.core$with_bindings_STAR_.doInvoke(core.clj:1983)
+	at clojure.lang.RestFn.invoke(RestFn.java:428)
+	at clojure.lang.AFn.applyToHelper(AFn.java:156)
+	at clojure.lang.RestFn.applyTo(RestFn.java:135)
+	at clojure.core$apply.invokeStatic(core.clj:671)
+	at clojure.core$bound_fn_STAR_$fn__3199.doInvoke(core.clj:2013)
+	at clojure.lang.RestFn.invoke(RestFn.java:400)
+	at clojure.core.async$thread_call$returning_to_chan__1024$fn__1025.invoke(async.clj:571)
+	at clojure.lang.AFn.run(AFn.java:22)
+	at java.base@25.0.3/java.util.concurrent.ThreadPerTaskExecutor$TaskRunner.run(ThreadPerTaskExecutor.java:291)
+	at java.base@25.0.3/java.lang.Thread.runWith(Thread.java:1487)
+	at java.base@25.0.3/java.lang.VirtualThread.run(VirtualThread.java:460)
+	at java.base@25.0.3/java.lang.VirtualThread$VThreadContinuation$1.run(VirtualThread.java:252)
+00000001 is an unknown value
+  R16 0x0000000304b2a2e8 points into the image heap (aligned chunk, writable)
+    is an object of type [I with length 256: 0x00000001 0x00000001 0x00000001 0x00000001 ...
+  R17 0x0000000304b2a6f8 points into the image heap (aligned chunk, writable)
+    is an object of type [I with length 256: 0x00000000 0x00000001 0x00000001 0x00000001 ...
+  R18 0x0000000000000000 
+  R19 0x000000030229ffb8 points into the image heap (aligned chunk, read-only)
+    is the hub of java.lang.VirtualThread
+  R20 0x0000000304b2af18 points into the image heap (aligned chunk, writable)
+    is an object of type com.oracle.svm.core.graal.aarch64.AArch64InterpreterStubs$AArch64InterpreterAccessStubData
+  R21 0x0000000000000070 is an unknown value
+  R22 0x000000030db91360 points into aligned chunk 0x000000030db80000 (S1)
+    is an object of type [Ljava.util.concurrent.ForkJoinTask; with length 64: 0x00000000 0x00000000 0x00000000 0x00000000 ...
+  R23 0x000000000000001f is an unknown value
+  R24 0x0000000000000020 is an unknown value
+  R25 0x000000000000003f is an unknown value
+  R26 0x0000000104dcc000 is the code base
+  R27 0x0000000300000000 is the heap base
+  R28 0x000000012da04800 is a thread
+  R29 0x0000000000000001 is an unknown value
+  R30 0x00000001058cf27c points into AOT compiled code com.oracle.svm.interpreter.Interpreter.execute0(Interpreter.java:485)
+  SP  0x000000016d4e02d0 points into the stack for thread 0x000000012da04800
+  PC  0x00000001058e18e8 points into AOT compiled code com.oracle.svm.interpreter.InterpreterToVM.releaseInterpreterFrameLocks(InterpreterToVM.java)
+  
+Printing instructions (ip=0x00000001058e18e8):
+  0x00000001058e17e8: 0x88 0x17 0x00 0xf9 0x43 0x00 0x00 0xb9 0x40 0x04 0x00 0xb9 0xbf 0x3a 0x03 0xd5
+  0x00000001058e17f8: 0xd6 0xff 0xff 0x17 0x87 0x17 0x42 0xa9 0xa8 0x20 0x00 0x91 0xff 0x00 0x08 0xeb
+  0x00000001058e1808: 0x83 0x03 0x00 0x54 0x88 0x17 0x00 0xf9 0xa3 0x00 0x00 0xb9 0xa1 0x04 0x00 0xb9
+  0x00000001058e1818: 0xbf 0x3a 0x03 0xd5 0xe1 0x03 0x05 0xaa 0xd4 0xff 0xff 0x17 0xe1 0x0b 0x02 0xa9
+  0x00000001058e1828: 0xe0 0x63 0x00 0xb9 0xe0 0x7c 0x40 0x92 0xe1 0x07 0x00 0x32 0x63 0xbc 0xec 0x97
+  0x00000001058e1838: 0xe3 0x03 0x00 0xaa 0xe1 0x0b 0x42 0xa9 0xd7 0xff 0xff 0x17 0xe5 0x17 0x00 0xf9
+  0x00000001058e1848: 0xe0 0x07 0x0c 0x29 0xe0 0x03 0x04 0xaa 0xe4 0x2f 0x00 0xf9 0x8b 0xbc 0xec 0x97
+  0x00000001058e1858: 0xe2 0x03 0x00 0xaa 0xe5 0x17 0x40 0xf9 0xe4 0x2f 0x40 0xf9 0x03 0x54 0x97 0x52
+  0x00000001058e1868: 0x03 0x04 0xa1 0x72 0xe0 0x07 0x4c 0x29 0xe6 0x1b 0x40 0xf9 0xdf 0xff 0xff 0x17
+  0x00000001058e1878: 0xe2 0x17 0x00 0xf9 0xe0 0x07 0x0c 0x29 0xe0 0x03 0x04 0xaa 0x7f 0xbc 0xec 0x97
+  0x00000001058e1888: 0xe5 0x03 0x00 0xaa 0xe2 0x17 0x40 0xf9 0xe0 0x07 0x4c 0x29 0xe6 0x1b 0x40 0xf9
+  0x00000001058e1898: 0xdf 0xff 0xff 0x17 0x1d 0xd6 0xec 0x17 0xcc 0xa6 0xfc 0x17 0xcc 0xcc 0xcc 0xcc
+  0x00000001058e18a8: 0xcc 0xcc 0xcc 0xcc 0xcc 0xcc 0xcc 0xcc 0xe9 0x03 0x02 0xd1 0x8a 0x07 0x40 0xf9
+  0x00000001058e18b8: 0x3f 0x01 0x0a 0xeb 0x29 0x12 0x00 0x54 0xfd 0x7b 0x3f 0xa9 0x3f 0x01 0x00 0x91
+  0x00000001058e18c8: 0xe1 0x03 0x04 0xa9 0x3f 0x00 0x1b 0xeb 0xe2 0x17 0x9f 0x1a 0x03 0x10 0x40 0xb9
+  0x00000001058e18d8: 0xe4 0x03 0x03 0x2a 0x64 0x0f 0x04 0x8b 0xe4 0x1f 0x00 0xf9 0xa3 0x10 0x00 0x34
+> 0x00000001058e18e8: 0x83 0x04 0x40 0xb9 0xe3 0x6f 0x00 0xb9 0x65 0x04 0x00 0x51 0xa6 0x79 0x89 0x52
+  0x00000001058e18f8: 0xc6 0x12 0xa0 0x72 0x66 0x0f 0x06 0x8b 0xe6 0x1b 0x00 0xf9 0x27 0xd0 0x89 0x52
+  0x00000001058e1908: 0xc7 0x12 0xa0 0x72 0x67 0x0f 0x07 0x8b 0xe7 0x17 0x00 0xf9 0xeb 0x03 0x05 0x2a
+  0x00000001058e1918: 0xe9 0x03 0x1f 0x2a 0xe9 0x6b 0x00 0xb9 0xe5 0x03 0x02 0x2a 0x1f 0x20 0x03 0xd5
+  0x00000001058e1928: 0x1f 0x20 0x03 0xd5 0x1f 0x20 0x03 0xd5 0x2b 0x0c 0xf8 0x37 0x7f 0x01 0x03 0x6b
+  0x00000001058e1938: 0x62 0x0b 0x00 0x54 0xe2 0x03 0x7d 0xb2 0x4c 0x48 0x2b 0x8b 0x82 0x68 0x6c 0xb8
+  0x00000001058e1948: 0x6d 0x05 0x00 0x51 0x02 0x03 0x00 0x34 0xec 0x2b 0x00 0xf9 0xe2 0x03 0x02 0x2a
+  0x00000001058e1958: 0x62 0x0f 0x02 0x8b 0xe2 0x13 0x00 0xf9 0x65 0x03 0x00 0x34 0xeb 0x37 0x0c 0x29
+  0x00000001058e1968: 0xe5 0x5f 0x00 0xb9 0xe0 0x03 0x06 0xaa 0xe1 0x03 0x02 0xaa 0xe2 0x03 0x07 0xaa
+  0x00000001058e1978: 0xb6 0x1d 0xf4 0x97 0xe4 0x1f 0x40 0xf9 0xec 0x2b 0x40 0xf9 0x9f 0x68 0x2c 0xb8
+  0x00000001058e1988: 0x89 0x13 0x40 0xb9 0x29 0x06 0x00 0x34 0xeb 0x67 0x40 0xb9 0xe9 0x03 0x00 0x32
+  0x00000001058e1998: 0xe9 0x6b 0x00 0xb9 0xe5 0x5f 0x40 0xb9 0xe7 0x9b 0x42 0xa9 0xe3 0x6f 0x40 0xb9
+  0x00000001058e19a8: 0xe2 0xff 0xff 0x17 0xeb 0x37 0x0c 0x29 0xe5 0x5f 0x00 0xb9 0x89 0x13 0x40 0xb9
+  0x00000001058e19b8: 0x29 0x04 0x00 0x34 0xeb 0x67 0x40 0xb9 0xe5 0x5f 0x40 0xb9 0xe7 0x9b 0x42 0xa9
+  0x00000001058e19c8: 0xda 0xff 0xff 0x17 0xeb 0x37 0x0c 0x29 0xe5 0x5f 0x00 0xb9 0xe1 0x23 0x40 0xf9
+  0x00000001058e19d8: 0x3f 0x00 0x02 0xeb 0x20 0x02 0x00 0x54 0xe0 0x1b 0x40 0xf9 0xe1 0x03 0x02 0xaa
+
+Top of stack (sp=0x000000016d4e02d0):
+  0x000000016d4e02b0: 0x000000030e3f66a0 0x01c7ecd400000000 0x000000030e3ca5a0 0x000000030cd04908
+> 0x000000016d4e02d0: 0x000000016d6f8300 0x0000000100000003 0x0000000000000001 0x00000001058d936c
+  0x000000016d4e02f0: 0x0000000000000000 0x0000000304b27408 0x0000000000000000 0x0000000341055c80
+  0x000000016d4e0310: 0x0000000300000000 0x00000003026fe898 0x000000000000002b 0x00000000000002c8
+  0x000000016d4e0330: 0x0000002a000000b0 0x0000000100000002 0x0000000000000001 0x00000001058cf27c
+  0x000000016d4e0350: 0x0000000000000002 0x0000000000000003 0x000000030df5d560 0x0000000000000018
+  0x000000016d4e0370: 0x000000030247ffd8 0x0000000300000000 0x000000030cd048a8 0x000000030247ffd8
+  0x000000016d4e0390: 0x000000030cd04908 0x00000003026fe8a8 0x000000030e3ca5a0 0x0000000100000000
+  0x000000016d4e03b0: 0x0000000000000001 0x00000001058cf14c 0x009648e700000000 0x0000000304b24738
+  0x000000016d4e03d0: 0x0000000304b2af28 0x000000030cd04908 0x000000030cd048a8 0x000000030e3ca5a0
+  0x000000016d4e03f0: 0x0000000400000001 0x0000000300000001 0x0000000000000001 0x00000001058cf0bc
+  0x000000016d4e0410: 0x0000000000000001 0x000000030e3ca5a0 0x0000000000000001 0x000000030e392ce0
+  0x000000016d4e0430: 0x000000030cd048a8 0x000000030e3ca5a0 0x0000000000000001 0x00000001058d9934
+  0x000000016d4e0450: 0x000000030e3ca5a0 0x0000002f0d2a18c0 0x0000000304b1d880 0x000000030cd048a8
+  0x000000016d4e0470: 0x000000030e3ca5a0 0x0000000000000000 0x0000000000000001 0x00000001058df824
+  0x000000016d4e0490: 0x000000030e3f66d8 0x000000030cd04878 0x000000030e3ca5a0 0x000000030e392ce0
+  0x000000016d4e04b0: 0x0042524300425243 0x000000030e3ca5a0 0x000000030cd048a8 0x0000000304b1d880
+
+VM thread locals for the failing thread 0x000000012da04800:
+  0: JNIThreadLocalEnvironment.jniFunctions = (bytes) 0x0000000000000000
+  8: StackOverflowCheckImpl.stackBoundaryTL = (Word) 0x0000000000000001 (1)
+  16: SafepointCheckCounter.value = (int) 0x3fffffff (1073741823)
+  20: StatusSupport.status = (int) 0x00000001 (1)
+  24: ThreadLocalAllocation.regularTLAB = (bytes) 
+    0x000000012da04818: 0x000000030cd19108 0x000000030cd19920
+    0x000000012da04828: 0x000000030cd19200 0x0000000000000000
+  56: JavaFrameAnchors.lastAnchor = (Word) 0x0000000000000000 (0)
+  64: JavaThreads.currentVThreadId = (long) 0x0000000000000064 (100)
+  72: PlatformThreads.currentThread = (Object) 0x000000030db81c10
+    is an object of type jdk.internal.misc.CarrierThread
+  80: ThreadLocalHandshake.handshakeMutex = (bytes) 
+    0x000000012da04850: 0x000000004d55545a 0x000020a000000000
+    0x000000012da04860: 0x4d55545a00000000 0x0000000000000000
+    0x000000012da04870: 0x0000000000000000 0xffffffffffffffff
+    0x000000012da04880: 0xfffffffed25fb7af 0x4d55545a4d55545a
+  144: ThreadLocalHandshake.handshakeCondition = (bytes) 
+    0x000000012da04890: 0x00000000434f4e45 0x8000000000000000
+    0x000000012da048a0: 0x0000000000000000 0x0000020100000200
+    0x000000012da048b0: 0x0000000000000200 0x0000000000000000
+  192: TlabSupport.allocatedBytesAvg = (bytes) 
+    0x000000012da048c0: 0x4093e00000000000 0x0000000000000001
+    0x000000012da048d0: 0x4041800000000000 0x0000000000000000
+  224: SubstrateDiagnostics.threadOnlyAttachedForCrashHandler = (bytes) 0x0000000000000000
+  232: ThreadLocalAllocation.allocatedAlignedBytes = (Word) 0x00000000000e9420 (955424)
+  240: ThreadLocalAllocation.allocatedUnalignedBytes = (Word) 0x0000000000000000 (0)
+  248: TlabSupport.desiredSize = (Word) 0x0000000000000800 (2048)
+  256: TlabSupport.refillWasteLimit = (Word) 0x0000000000000020 (32)
+  264: TlabSupport.tlabAllocatedAlignedBytesBeforeLastGC = (Word) 0x00000000000004f8 (1272)
+  272: VMThreads.IsolateTL = (Word) 0x0000000300000000 (12884901888)
+  280: VMThreads.OSThreadHandleTL = (Word) 0x000000016d4e3000 (6128807936)
+  288: VMThreads.OSThreadIdTL = (Word) 0x0000000000005303 (21251)
+  296: VMThreads.StackBase = (Word) 0x000000016d4e3000 (6128807936)
+  304: VMThreads.StackEnd = (Word) 0x000000016d2d4000 (6126649344)
+  312: VMThreads.StartedByCurrentIsolate = (bytes) 0x0000000000000001
+  320: VMThreads.nextTL = (Word) 0x000000012db04640 (5061494336)
+  328: VMThreads.unalignedIsolateThreadMemoryTL = (Word) 0x000000012da04800 (5060446208)
+  336: ExceptionUnwind.currentException = (Object) 0x0000000000000000
+  340: Interpreter handles for enter stub = (Object) 0x000000030db83ad8
+    is an object of type com.oracle.svm.core.handles.ThreadLocalHandles
+  344: JNIObjectHandles.handles = (Object) 0x0000000000000000
+  348: JNIThreadLocalPendingException.pendingException = (Object) 0x0000000000000000
+  352: JNIThreadLocalPrimitiveArrayViews.referencedArraysListHead = (Object) 0x0000000000000000
+  356: JNIThreadOwnedMonitors.ownedMonitors = (Object) 0x0000000000000000
+  360: NoAllocationVerifier.openVerifiers = (Object) 0x0000000000000000
+  364: RecurringCallbackSupport.timer = (Object) 0x0000000000000000
+  368: RecurringCallbackTimer.exception = (Object) 0x0000000000000000
+  372: ActionOnTransitionToJavaSupport.actionTL = (int) 0x00000000 (0)
+  376: ImplicitExceptions.implicitExceptionsAreFatal = (int) 0x00000000 (0)
+  380: StackOverflowCheckImpl.yellowZoneStateTL = (int) 0x7efefefe (2130640638)
+  384: StatusSupport.safepointBehaviorTL = (int) 0x00000001 (1)
+  388: ThreadLocalHandshake.handshakeState = (int) 0x00000000 (0)
+  392: ThreadSuspendSupport.suspended = (int) 0x00000000 (0)
+  396: ThreadsLock.access = (int) 0x00000000 (0)
+  400: TlabSupport.gcWaste = (int) 0x00000000 (0)
+  404: TlabSupport.numberOfRefills = (int) 0x000000b3 (179)
+  408: TlabSupport.refillWaste = (int) 0x00000800 (2048)
+  412: TlabSupport.slowAllocations = (int) 0x00000035 (53)
+  
+Java frame anchors for the failing thread 0x000000012da04800:
+  No anchors
+  
+Stacktrace for the failing thread 0x000000012da04800 (A=AOT compiled, J=JIT compiled, D=deoptimized, i=inlined, C=native):
+  A  SP 0x000000016d4e02d0 IP 0x00000001058e18e8 size=128   com.oracle.svm.interpreter.InterpreterToVM.releaseInterpreterFrameLocks(InterpreterToVM.java)
+  A  SP 0x000000016d4e0350 IP 0x00000001058cf27c size=112   com.oracle.svm.interpreter.Interpreter.execute0(Interpreter.java:485)
+  A  SP 0x000000016d4e03c0 IP 0x00000001058cf14c size=80    com.oracle.svm.interpreter.Interpreter.execute(Interpreter.java:401)
+  A  SP 0x000000016d4e0410 IP 0x00000001058cf0bc size=64    com.oracle.svm.interpreter.Interpreter.execute(Interpreter.java:389)
+  i  SP 0x000000016d4e0450 IP 0x00000001058d9934 size=64    com.oracle.svm.interpreter.InterpreterStubSection.callInterpreterInterruptibly(InterpreterStubSection.java:861)
+  A  SP 0x000000016d4e0450 IP 0x00000001058d9934 size=64    com.oracle.svm.interpreter.InterpreterStubSection.call(InterpreterStubSection.java:856)
+  A  SP 0x000000016d4e0490 IP 0x00000001058df824 size=112   com.oracle.svm.interpreter.InterpreterToVM.dispatchInvocation(InterpreterToVM.java:847)
+  A  SP 0x000000016d4e0500 IP 0x00000001058d0598 size=240   com.oracle.svm.interpreter.Interpreter.invoke(Interpreter.java:1705)
+  A  SP 0x000000016d4e05f0 IP 0x00000001058c085c size=272   com.oracle.svm.interpreter.Interpreter$Root.executeBodyFromBCI(Interpreter.java:1215)  clojure.core.async.impl.dispatch$in_vthread_QMARK_.invoke(dispatch.clj:107) @bci 0
+  A  SP 0x000000016d4e0700 IP 0x00000001058cf26c size=112   com.oracle.svm.interpreter.Interpreter.execute0(Interpreter.java:482)
+  A  SP 0x000000016d4e0770 IP 0x00000001058cf14c size=80    com.oracle.svm.interpreter.Interpreter.execute(Interpreter.java:401)
+  A  SP 0x000000016d4e07c0 IP 0x00000001058cf0bc size=64    com.oracle.svm.interpreter.Interpreter.execute(Interpreter.java:389)
+  i  SP 0x000000016d4e0800 IP 0x00000001058d9934 size=64    com.oracle.svm.interpreter.InterpreterStubSection.callInterpreterInterruptibly(InterpreterStubSection.java:861)
+  A  SP 0x000000016d4e0800 IP 0x00000001058d9934 size=64    com.oracle.svm.interpreter.InterpreterStubSection.call(InterpreterStubSection.java:856)
+  A  SP 0x000000016d4e0840 IP 0x00000001058df824 size=112   com.oracle.svm.interpreter.InterpreterToVM.dispatchInvocation(InterpreterToVM.java:847)
+  A  SP 0x000000016d4e08b0 IP 0x00000001058d0598 size=240   com.oracle.svm.interpreter.Interpreter.invoke(Interpreter.java:1705)
+  A  SP 0x000000016d4e09a0 IP 0x00000001058c085c size=272   com.oracle.svm.interpreter.Interpreter$Root.executeBodyFromBCI(Interpreter.java:1215)  clojure.core.async$_GT__BANG_.invokeStatic(async.clj:250) @bci 9
+  A  SP 0x000000016d4e0ab0 IP 0x00000001058cf26c size=112   com.oracle.svm.interpreter.Interpreter.execute0(Interpreter.java:482)
+  A  SP 0x000000016d4e0b20 IP 0x00000001058cf14c size=80    com.oracle.svm.interpreter.Interpreter.execute(Interpreter.java:401)
+  A  SP 0x000000016d4e0b70 IP 0x00000001058cf0bc size=64    com.oracle.svm.interpreter.Interpreter.execute(Interpreter.java:389)
+  i  SP 0x000000016d4e0bb0 IP 0x00000001058d9934 size=64    com.oracle.svm.interpreter.InterpreterStubSection.callInterpreterInterruptibly(InterpreterStubSection.java:861)
+  A  SP 0x000000016d4e0bb0 IP 0x00000001058d9934 size=64    com.oracle.svm.interpreter.InterpreterStubSection.call(InterpreterStubSection.java:856)
+  A  SP 0x000000016d4e0bf0 IP 0x00000001058df824 size=112   com.oracle.svm.interpreter.InterpreterToVM.dispatchInvocation(InterpreterToVM.java:847)
+  A  SP 0x000000016d4e0c60 IP 0x00000001058d0598 size=240   com.oracle.svm.interpreter.Interpreter.invoke(Interpreter.java:1705)
+  A  SP 0x000000016d4e0d50 IP 0x00000001058c085c size=272   com.oracle.svm.interpreter.Interpreter$Root.executeBodyFromBCI(Interpreter.java:1215)  clojure.core.async$_GT__BANG_.doInvoke(async.clj:250) @bci 6
+  A  SP 0x000000016d4e0e60 IP 0x00000001058cf26c size=112   com.oracle.svm.interpreter.Interpreter.execute0(Interpreter.java:482)
+  A  SP 0x000000016d4e0ed0 IP 0x00000001058cf14c size=80    com.oracle.svm.interpreter.Interpreter.execute(Interpreter.java:401)
+  A  SP 0x000000016d4e0f20 IP 0x00000001058cf0bc size=64    com.oracle.svm.interpreter.Interpreter.execute(Interpreter.java:389)
+  i  SP 0x000000016d4e0f60 IP 0x00000001058d9934 size=64    com.oracle.svm.interpreter.InterpreterStubSection.callInterpreterInterruptibly(InterpreterStubSection.java:861)
+  A  SP 0x000000016d4e0f60 IP 0x00000001058d9934 size=64    com.oracle.svm.interpreter.InterpreterStubSection.call(InterpreterStubSection.java:856)
+  A  SP 0x000000016d4e0fa0 IP 0x00000001058d8d74 size=176   com.oracle.svm.interpreter.InterpreterStubSection.enterInterpreterStubCore(InterpreterStubSection.java:467)
+  A  SP 0x000000016d4e1050 IP 0x00000001058d7f48 size=80    com.oracle.svm.interpreter.InterpreterStubSection.enterInterpreterStub0(InterpreterStubSection.java:407)
+  i  SP 0x000000016d4e10a0 IP 0x00000001058d936c size=384   com.oracle.svm.interpreter.InterpreterStubSection.enterHelper(InterpreterStubSection.java:358)
+  A  SP 0x000000016d4e10a0 IP 0x00000001058d936c size=384   com.oracle.svm.interpreter.InterpreterStubSection.enterVTableInterpreterStub(InterpreterStubSection.java:288)
+  A  SP 0x000000016d4e1220 IP 0x00000001051bbb5c size=96    clojure.lang.RestFn.invoke(RestFn.java:424)
+  A  SP 0x000000016d4e1280 IP 0x00000001058db5e4 size=48    com.oracle.svm.interpreter.InterpreterStubSection.leaveInterpreterStub(InterpreterStubSection.java)
+  C  SP 0x000000016d4e12b0 IP 0x00000001058da090 size=16    unknown
+  A  SP 0x000000016d4e12c0 IP 0x00000001058da090 size=144   com.oracle.svm.interpreter.InterpreterStubSection.leaveInterpreter0(InterpreterStubSection.java:616)
+  A  SP 0x000000016d4e1350 IP 0x00000001058d9a70 size=272   com.oracle.svm.interpreter.InterpreterStubSection.leaveInterpreter(InterpreterStubSection.java:520)
+  A  SP 0x000000016d4e1460 IP 0x00000001058df7cc size=112   com.oracle.svm.interpreter.InterpreterToVM.dispatchInvocation(InterpreterToVM.java:844)
+  A  SP 0x000000016d4e14d0 IP 0x00000001058d0598 size=240   com.oracle.svm.interpreter.Interpreter.invoke(Interpreter.java:1705)
+  A  SP 0x000000016d4e15c0 IP 0x00000001058c085c size=272   com.oracle.svm.interpreter.Interpreter$Root.executeBodyFromBCI(Interpreter.java:1215)  clojure.core.async$onto_chan_BANG_$fn__1089.invoke(async.clj:773) @bci 65
+  A  SP 0x000000016d4e16d0 IP 0x00000001058cf26c size=112   com.oracle.svm.interpreter.Interpreter.execute0(Interpreter.java:482)
+  A  SP 0x000000016d4e1740 IP 0x00000001058cf14c size=80    com.oracle.svm.interpreter.Interpreter.execute(Interpreter.java:401)
+  A  SP 0x000000016d4e1790 IP 0x00000001058cf0bc size=64    com.oracle.svm.interpreter.Interpreter.execute(Interpreter.java:389)
+  i  SP 0x000000016d4e17d0 IP 0x00000001058d9934 size=64    com.oracle.svm.interpreter.InterpreterStubSection.callInterpreterInterruptibly(InterpreterStubSection.java:861)
+  A  SP 0x000000016d4e17d0 IP 0x00000001058d9934 size=64    com.oracle.svm.interpreter.InterpreterStubSection.call(InterpreterStubSection.java:856)
+  A  SP 0x000000016d4e1810 IP 0x00000001058d8d74 size=176   com.oracle.svm.interpreter.InterpreterStubSection.enterInterpreterStubCore(InterpreterStubSection.java:467)
+  A  SP 0x000000016d4e18c0 IP 0x00000001058d7f48 size=80    com.oracle.svm.interpreter.InterpreterStubSection.enterInterpreterStub0(InterpreterStubSection.java:407)
+  i  SP 0x000000016d4e1910 IP 0x00000001058d936c size=384   com.oracle.svm.interpreter.InterpreterStubSection.enterHelper(InterpreterStubSection.java:358)
+  A  SP 0x000000016d4e1910 IP 0x00000001058d936c size=384   com.oracle.svm.interpreter.InterpreterStubSection.enterVTableInterpreterStub(InterpreterStubSection.java:288)
+  A  SP 0x000000016d4e1a90 IP 0x000000010504138c size=352   clojure.lang.AFn.applyToHelper(AFn.java:152)
+  A  SP 0x000000016d4e1bf0 IP 0x0000000105040024 size=48    clojure.lang.AFn.applyTo(AFn.java:144)
+  A  SP 0x000000016d4e1c20 IP 0x0000000104ed17f8 size=48    clojure.core$apply.invokeStatic(core.clj:667)
+  A  SP 0x000000016d4e1c50 IP 0x0000000104fe3ea8 size=64    clojure.core$with_bindings_STAR_.invokeStatic(core.clj:1983)
+  A  SP 0x000000016d4e1c90 IP 0x0000000104fe3db8 size=48    clojure.core$with_bindings_STAR_.doInvoke(core.clj:1983)
+  A  SP 0x000000016d4e1cc0 IP 0x00000001051bbc0c size=96    clojure.lang.RestFn.invoke(RestFn.java:428)
+  A  SP 0x000000016d4e1d20 IP 0x00000001050440a8 size=352   clojure.lang.AFn.applyToHelper(AFn.java:156)
+  A  SP 0x000000016d4e1e80 IP 0x00000001051af120 size=368   clojure.lang.RestFn.applyTo(RestFn.java:135)
+  A  SP 0x000000016d4e1ff0 IP 0x0000000104ed1a4c size=64    clojure.core$apply.invokeStatic(core.clj:671)
+  A  SP 0x000000016d4e2030 IP 0x0000000104ee3ab8 size=48    clojure.core$bound_fn_STAR_$fn__3199.doInvoke(core.clj:2013)
+  A  SP 0x000000016d4e2060 IP 0x00000001051bb8e0 size=64    clojure.lang.RestFn.invoke(RestFn.java:400)
+  A  SP 0x000000016d4e20a0 IP 0x00000001058db5e4 size=48    com.oracle.svm.interpreter.InterpreterStubSection.leaveInterpreterStub(InterpreterStubSection.java)
+  C  SP 0x000000016d4e20d0 IP 0x00000001058da090 size=16    unknown
+  A  SP 0x000000016d4e20e0 IP 0x00000001058da090 size=144   com.oracle.svm.interpreter.InterpreterStubSection.leaveInterpreter0(InterpreterStubSection.java:616)
+  A  SP 0x000000016d4e2170 IP 0x00000001058d9a70 size=272   com.oracle.svm.interpreter.InterpreterStubSection.leaveInterpreter(InterpreterStubSection.java:520)
+  A  SP 0x000000016d4e2280 IP 0x00000001058df7cc size=112   com.oracle.svm.interpreter.InterpreterToVM.dispatchInvocation(InterpreterToVM.java:844)
+  A  SP 0x000000016d4e22f0 IP 0x00000001058d0598 size=240   com.oracle.svm.interpreter.Interpreter.invoke(Interpreter.java:1705)
+  A  SP 0x000000016d4e23e0 IP 0x00000001058c085c size=272   com.oracle.svm.interpreter.Interpreter$Root.executeBodyFromBCI(Interpreter.java:1215)  clojure.core.async$thread_call$returning_to_chan__1024$fn__1025.invoke(async.clj:571) @bci 7
+  A  SP 0x000000016d4e24f0 IP 0x00000001058cf26c size=112   com.oracle.svm.interpreter.Interpreter.execute0(Interpreter.java:482)
+  A  SP 0x000000016d4e2560 IP 0x00000001058cf14c size=80    com.oracle.svm.interpreter.Interpreter.execute(Interpreter.java:401)
+  A  SP 0x000000016d4e25b0 IP 0x00000001058cf0bc size=64    com.oracle.svm.interpreter.Interpreter.execute(Interpreter.java:389)
+  i  SP 0x000000016d4e25f0 IP 0x00000001058d9934 size=64    com.oracle.svm.interpreter.InterpreterStubSection.callInterpreterInterruptibly(InterpreterStubSection.java:861)
+  A  SP 0x000000016d4e25f0 IP 0x00000001058d9934 size=64    com.oracle.svm.interpreter.InterpreterStubSection.call(InterpreterStubSection.java:856)
+  A  SP 0x000000016d4e2630 IP 0x00000001058d8d74 size=176   com.oracle.svm.interpreter.InterpreterStubSection.enterInterpreterStubCore(InterpreterStubSection.java:467)
+  A  SP 0x000000016d4e26e0 IP 0x00000001058d7f48 size=80    com.oracle.svm.interpreter.InterpreterStubSection.enterInterpreterStub0(InterpreterStubSection.java:407)
+  i  SP 0x000000016d4e2730 IP 0x00000001058d936c size=384   com.oracle.svm.interpreter.InterpreterStubSection.enterHelper(InterpreterStubSection.java:358)
+  A  SP 0x000000016d4e2730 IP 0x00000001058d936c size=384   com.oracle.svm.interpreter.InterpreterStubSection.enterVTableInterpreterStub(InterpreterStubSection.java:288)
+  A  SP 0x000000016d4e28b0 IP 0x000000010504e12c size=48    clojure.lang.AFn.run(AFn.java:22)
+  A  SP 0x000000016d4e28e0 IP 0x0000000106ba29e8 size=64    java.util.concurrent.ThreadPerTaskExecutor$TaskRunner.run(ThreadPerTaskExecutor.java:291)
+  i  SP 0x000000016d4e2920 IP 0x0000000106299c20 size=80    java.lang.Thread.runWith(Thread.java:1487)
+  A  SP 0x000000016d4e2920 IP 0x0000000106299c20 size=80    java.lang.VirtualThread.run(VirtualThread.java:460)
+  A  SP 0x000000016d4e2970 IP 0x0000000106296344 size=48    java.lang.VirtualThread$VThreadContinuation$1.run(VirtualThread.java:252)
+  A  SP 0x000000016d4e29a0 IP 0x00000001073018f4 size=64    jdk.internal.vm.Continuation.enter(Continuation.java:175)
+  i  SP 0x000000016d4e29e0 IP 0x00000001057ff030 size=48    jdk.internal.vm.Continuation.enter0(Continuation.java:188)
+  A  SP 0x000000016d4e29e0 IP 0x00000001057ff030 size=48    com.oracle.svm.core.thread.ContinuationInternals.enterSpecial2(ContinuationInternals.java:123)
+  A  SP 0x000000016d4e2a10 IP 0x00000001057fefb0 size=96    com.oracle.svm.core.thread.ContinuationInternals.enterSpecial1(ContinuationInternals.java:114)
+  A  SP 0x000000016d4e2a70 IP 0x00000001057feebc size=64    com.oracle.svm.core.thread.ContinuationInternals.enterSpecial0(ContinuationInternals.java:62)
+  A  SP 0x000000016d4e2ab0 IP 0x00000001073019e8 size=96    jdk.internal.vm.Continuation.enterSpecial(Continuation.java:142)
+  A  SP 0x000000016d4e2b10 IP 0x00000001073020b4 size=96    jdk.internal.vm.Continuation.run(Continuation.java:254)
+  A  SP 0x000000016d4e2b70 IP 0x0000000106299d94 size=64    java.lang.VirtualThread.runContinuation(VirtualThread.java:297)
+  A  SP 0x000000016d4e2bb0 IP 0x0000000106295734 size=48    java.lang.VirtualThread$$Lambda/0x1e29634a53b1f1bbb2a8d05b8562883d0.run(Unknown Source)
+  A  SP 0x000000016d4e2be0 IP 0x0000000106b4fa68 size=48    java.util.concurrent.ForkJoinTask$RunnableExecuteAction.compute(ForkJoinTask.java:1750)
+  A  SP 0x000000016d4e2c10 IP 0x0000000106b4f974 size=48    java.util.concurrent.ForkJoinTask$RunnableExecuteAction.compute(ForkJoinTask.java:1742)
+  A  SP 0x000000016d4e2c40 IP 0x0000000106b4e41c size=80    java.util.concurrent.ForkJoinTask$InterruptibleTask.exec(ForkJoinTask.java:1659)
+  A  SP 0x000000016d4e2c90 IP 0x0000000106b56438 size=64    java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:511)
+  A  SP 0x000000016d4e2cd0 IP 0x0000000106b3bbcc size=64    java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1450)
+  A  SP 0x000000016d4e2d10 IP 0x0000000106b46340 size=192   java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:2019)
+  A  SP 0x000000016d4e2dd0 IP 0x0000000106b595c4 size=96    java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:187)
+  A  SP 0x000000016d4e2e30 IP 0x000000010580123c size=64    com.oracle.svm.core.thread.PlatformThreads.threadStartRoutine(PlatformThreads.java:915)
+  A  SP 0x000000016d4e2e70 IP 0x0000000105801390 size=80    com.oracle.svm.core.thread.PlatformThreads.threadStartRoutine(PlatformThreads.java:898)
+  A  SP 0x000000016d4e2ec0 IP 0x00000001053d2694 size=272   com.oracle.svm.core.code.IsolateEnterStub.PlatformThreads_threadStartRoutine_qEorKm7ThyJBTyo3M8bJZ0(IsolateEnterStub.java:0)
+  
+Threads:
+  0x000000012dd04080 STATUS_IN_SAFEPOINT (ALLOW_SAFEPOINT) "ForkJoinPool-3-worker-14" - 0x000000030db81840, daemon, stack(0x000000016cea4000,0x000000016d0b3000), OS thread 21507 (0x000000016d0b3000)
+  0x000000012dc04080 STATUS_IN_JAVA (ALLOW_SAFEPOINT) "ForkJoinPool-3-worker-13" - 0x000000030db81a28, daemon, stack(0x000000016d0bc000,0x000000016d2cb000), OS thread 16387 (0x000000016d2cb000)
+  0x000000012d904800 STATUS_IN_SAFEPOINT (ALLOW_SAFEPOINT) "ForkJoinPool-3-worker-16" - 0x000000030db80b10, daemon, stack(0x000000016d4ec000,0x000000016d6fb000), OS thread 20995 (0x000000016d6fb000)
+  0x000000012da04800 STATUS_IN_JAVA (PREVENT_VM_FROM_REACHING_SAFEPOINT) "ForkJoinPool-3-worker-15" - 0x000000030db81c10, daemon, stack(0x000000016d2d4000,0x000000016d4e3000), OS thread 21251 (0x000000016d4e3000)
+  0x000000012db04640 STATUS_IN_SAFEPOINT (ALLOW_SAFEPOINT) "ForkJoinPool-3-worker-12" - 0x000000030db81df8, daemon, stack(0x000000016cc8c000,0x000000016ce9b000), OS thread 12803 (0x000000016ce9b000)
+  0x000000012db04440 STATUS_IN_SAFEPOINT (ALLOW_SAFEPOINT) "ForkJoinPool-3-worker-11" - 0x000000030db81fe0, daemon, stack(0x000000016ca74000,0x000000016cc83000), OS thread 13315 (0x000000016cc83000)
+  0x000000012d904640 STATUS_IN_SAFEPOINT (ALLOW_SAFEPOINT) "ForkJoinPool-3-worker-10" - 0x000000030db821c8, daemon, stack(0x000000016c85c000,0x000000016ca6b000), OS thread 13571 (0x000000016ca6b000)
+  0x000000012db04280 STATUS_IN_SAFEPOINT (ALLOW_SAFEPOINT) "ForkJoinPool-3-worker-9" - 0x000000030db823b0, daemon, stack(0x000000016c644000,0x000000016c853000), OS thread 14083 (0x000000016c853000)
+  0x000000012da04640 STATUS_IN_SAFEPOINT (ALLOW_SAFEPOINT) "ForkJoinPool-3-worker-8" - 0x000000030db82598, daemon, stack(0x000000016c42c000,0x000000016c63b000), OS thread 14339 (0x000000016c63b000)
+  0x000000012da04440 STATUS_IN_SAFEPOINT (ALLOW_SAFEPOINT) "ForkJoinPool-3-worker-7" - 0x000000030db82780, daemon, stack(0x000000016c214000,0x000000016c423000), OS thread 14851 (0x000000016c423000)
+  0x000000012db04080 STATUS_IN_SAFEPOINT (ALLOW_SAFEPOINT) "ForkJoinPool-3-worker-6" - 0x000000030db82968, daemon, stack(0x000000016bffc000,0x000000016c20b000), OS thread 15107 (0x000000016c20b000)
+  0x000000012d904440 STATUS_IN_SAFEPOINT (ALLOW_SAFEPOINT) "ForkJoinPool-3-worker-5" - 0x000000030db82b50, daemon, stack(0x000000016bde4000,0x000000016bff3000), OS thread 15619 (0x000000016bff3000)
+  0x000000012d904280 STATUS_IN_SAFEPOINT (ALLOW_SAFEPOINT) "ForkJoinPool-3-worker-4" - 0x000000030db82d38, daemon, stack(0x000000016bbcc000,0x000000016bddb000), OS thread 11267 (0x000000016bddb000)
+  0x000000012da04280 STATUS_IN_SAFEPOINT (ALLOW_SAFEPOINT) "ForkJoinPool-3-worker-3" - 0x000000030db82f20, daemon, stack(0x000000016b9b4000,0x000000016bbc3000), OS thread 11011 (0x000000016bbc3000)
+  0x000000012da04080 STATUS_IN_SAFEPOINT (ALLOW_SAFEPOINT) "ForkJoinPool-3-worker-2" - 0x000000030db83108, daemon, stack(0x000000016b79c000,0x000000016b9ab000), OS thread 10755 (0x000000016b9ab000)
+  0x000000012d904080 STATUS_IN_SAFEPOINT (ALLOW_SAFEPOINT) "ForkJoinPool-3-worker-1" - 0x000000030db832f0, daemon, stack(0x000000016b584000,0x000000016b793000), OS thread 9219 (0x000000016b793000)
+  0x000000012c604c80 STATUS_IN_SAFEPOINT (ALLOW_SAFEPOINT) "Signal Dispatcher" - 0x000000030e4043b8, daemon, stack(0x000000016b254000,0x000000016b463000), OS thread 5891 (0x000000016b463000)
+  0x000000012c7058c0 STATUS_IN_SAFEPOINT (ALLOW_SAFEPOINT) "Reference Handler" - 0x0000000304b260e0, daemon, stack(0x000000016b03c000,0x000000016b24b000), OS thread 3591 (0x000000016b24b000)
+  0x000000012c705700 STATUS_IN_SAFEPOINT (ALLOW_SAFEPOINT) "main" - 0x0000000304b25dd0, stack(0x000000016a83c000,0x000000016b038000), OS thread 259 (0x00000001fd14a0c0)
+  
+No VMOperation in progress
+
+The 30 most recent VM operation status changes:
+  0.052s - Started Garbage collection (safepoint: true, queueingThread: 0x000000012c705700, executingThread: 0x000000012c705700, safepointId: 1)
+  0.055s - Finished Garbage collection (safepoint: true, queueingThread: 0x000000012c705700, executingThread: 0x000000012c705700, safepointId: 1)
+  0.095s - Started Garbage collection (safepoint: true, queueingThread: 0x000000012c705700, executingThread: 0x000000012c705700, safepointId: 2)
+  0.098s - Finished Garbage collection (safepoint: true, queueingThread: 0x000000012c705700, executingThread: 0x000000012c705700, safepointId: 2)
+  0.142s - Started Garbage collection (safepoint: true, queueingThread: 0x000000012c705700, executingThread: 0x000000012c705700, safepointId: 3)
+  0.146s - Finished Garbage collection (safepoint: true, queueingThread: 0x000000012c705700, executingThread: 0x000000012c705700, safepointId: 3)
+  0.190s - Started Garbage collection (safepoint: true, queueingThread: 0x000000012c705700, executingThread: 0x000000012c705700, safepointId: 4)
+  0.194s - Finished Garbage collection (safepoint: true, queueingThread: 0x000000012c705700, executingThread: 0x000000012c705700, safepointId: 4)
+  0.247s - Started Garbage collection (safepoint: true, queueingThread: 0x000000012c705700, executingThread: 0x000000012c705700, safepointId: 5)
+  0.253s - Finished Garbage collection (safepoint: true, queueingThread: 0x000000012c705700, executingThread: 0x000000012c705700, safepointId: 5)
+  0.300s - Started Garbage collection (safepoint: true, queueingThread: 0x000000012d904800, executingThread: 0x000000012d904800, safepointId: 6)
+  0.308s - Finished Garbage collection (safepoint: true, queueingThread: 0x000000012d904800, executingThread: 0x000000012d904800, safepointId: 6)
+  
+VM mutexes:
+  mutex "AbstractCollectionPolicy.sizes" is unlocked.
+  mutex "RealLog.backTracePrinterMutex" is unlocked.
+  mutex "VMOperationControl" is locked by thread 0x000000012dc04080
+  mutex "freeList" is unlocked.
+  mutex "referencePendingList" is unlocked.
+  mutex "safepoint" is locked by thread 0x000000012dc04080
+  mutex "threadsRead" is unlocked.
+  mutex "threadsWrite" is locked by thread 0x000000012dc04080
+  
+Build time information:
+  Version: Oracle GraalVM 25.1.3+9.1 (serial gc, compressed references), JDK 25.0.3+9-LTS
+  Platform: darwin/aarch64
+  Page size: 65536
+  Supports isolates: true
+  Container support: false
+  Object reference size: 4
+  CPU features used for AOT compiled code: FP, ASIMD, CRC32, LSE
+  
+Runtime information:
+  Isolate id: 0
+  Heap base: 0x0000000300000000
+  Code base: 0x0000000104dcc000
+  CGlobalData base: 0x0000000107ccc000
+  Containerized: false
+  CPU cores (OS): 16
+  Memory (OS): 131072M
+  Page size: 16384
+  VM uptime: 0.329s
+  Current timestamp: 1782928714441
+  AOT compiled code: 0x0000000104dcc000 - 0x0000000107c7f55f
+  
+Command line: '-Scp' 'src:/Users/borkdude/.m2/repository/babashka/fs/0.5.26/fs-0.5.26.jar:/Users/borkdude/.m2/repository/babashka/process/0.5.22/process-0.5.22.jar:/Users/borkdude/.m2/repository/borkdude/deps.clj/1.12.4.1597/deps.clj-1.12.4.1597.jar:/Users/borkdude/.gitlibs/libs/camel-snake-kebab/camel-snake-kebab/d072c7fd242ab0becd4bb265622ded415f2a4b68/src:/Users/borkdude/.m2/repository/cheshire/cheshire/5.13.0/cheshire-5.13.0.jar:/Users/borkdude/.m2/repository/clj-commons/clj-yaml/1.0.27/clj-yaml-1.0.27.jar:/Users/borkdude/.m2/repository/com/github/clj-easy/graal-build-time/1.0.5/graal-build-time-1.0.5.jar:/Users/borkdude/.gitlibs/libs/hiccup/hiccup/b6b12097ba973141fe87c1b4d6a27ddcce5d5929/src:/Users/borkdude/.gitlibs/libs/hiccup/hiccup/b6b12097ba973141fe87c1b4d6a27ddcce5d5929/resources:/Users/borkdude/.m2/repository/http-kit/http-kit/2.8.0/http-kit-2.8.0.jar:/Users/borkdude/.m2/repository/instaparse/instaparse/1.5.0/instaparse-1.5.0.jar:/Users/borkdude/.gitlibs/libs/io.github.cognitect-labs/test-runner/dfb30dd6605cb6c0efc275e1df1736f6e90d4d73/src:/Users/borkdude/.gitlibs/libs/io.github.nextjournal/markdown/ee9da78b347246260dbe66412336aafe20397fa3/src:/Users/borkdude/.gitlibs/libs/io.github.nextjournal/markdown/ee9da78b347246260dbe66412336aafe20397fa3/resources:/Users/borkdude/.gitlibs/libs/lambdaisland/deep-diff2/cb8385fd48c1b023051e9d78f5511ff1d929bc08/resources:/Users/borkdude/.gitlibs/libs/lambdaisland/deep-diff2/cb8385fd48c1b023051e9d78f5511ff1d929bc08/src:/Users/borkdude/.gitlibs/libs/medley/medley/d723afcb18e1fae27f3b68a25c7a151569159a9e/src:/Users/borkdude/.m2/repository/nubank/matcher-combinators/3.9.1/matcher-combinators-3.9.1.jar:/Users/borkdude/.m2/repository/org/clojure/clojure/1.13.0-cream-SNAPSHOT/clojure-1.13.0-cream-SNAPSHOT.jar:/Users/borkdude/.gitlibs/libs/org.clojure/core.async/b871f3519de6843a9f5ce66cf8d5c6cbe44d3222/src/main/clojure:/Users/borkdude/.gitlibs/libs/org.clojure/data.csv/aa9b3bdd3a1d3f6a7fe12eaab76b45ef3f197ad5/src/main/clojure:/Users/borkdude/.gitlibs/libs/org.clojure/data.json/9f1c9ccf3fd3e5a39cfb7289d3d456e842ddf442/src/main/clojure:/Users/borkdude/.gitlibs/libs/org.clojure/math.combinatorics/e555a45b5802cf5e8c43b4377628ef34a634554b/src/main/clojure:/Users/borkdude/.m2/repository/org/clojure/test.check/1.1.1/test.check-1.1.1.jar:/Users/borkdude/.gitlibs/libs/org.clojure/tools.reader/2914602ff08352a15ae2cdaa49f76e6ca0386818/src/main/clojure:/Users/borkdude/.gitlibs/libs/prismatic/schema/74a1ecdb645d3f43b405a27e2b70f72db861b7ca/src/clj:/Users/borkdude/.gitlibs/libs/prismatic/schema/74a1ecdb645d3f43b405a27e2b70f72db861b7ca/src/cljc:/Users/borkdude/.m2/repository/com/fasterxml/jackson/core/jackson-core/2.17.0/jackson-core-2.17.0.jar:/Users/borkdude/.m2/repository/com/fasterxml/jackson/dataformat/jackson-dataformat-cbor/2.17.0/jackson-dataformat-cbor-2.17.0.jar:/Users/borkdude/.m2/repository/com/fasterxml/jackson/dataformat/jackson-dataformat-smile/2.17.0/jackson-dataformat-smile-2.17.0.jar:/Users/borkdude/.m2/repository/tigris/tigris/0.1.2/tigris-0.1.2.jar:/Users/borkdude/.m2/repository/org/flatland/ordered/1.15.11/ordered-1.15.11.jar:/Users/borkdude/.m2/repository/org/yaml/snakeyaml/2.1/snakeyaml-2.1.jar:/Users/borkdude/.m2/repository/org/clojure/tools.cli/1.0.206/tools.cli-1.0.206.jar:/Users/borkdude/.m2/repository/org/clojure/tools.namespace/1.3.0/tools.namespace-1.3.0.jar:/Users/borkdude/.m2/repository/org/commonmark/commonmark/0.24.0/commonmark-0.24.0.jar:/Users/borkdude/.m2/repository/org/commonmark/commonmark-ext-autolink/0.24.0/commonmark-ext-autolink-0.24.0.jar:/Users/borkdude/.m2/repository/org/commonmark/commonmark-ext-footnotes/0.24.0/commonmark-ext-footnotes-0.24.0.jar:/Users/borkdude/.m2/repository/org/commonmark/commonmark-ext-gfm-strikethrough/0.24.0/commonmark-ext-gfm-strikethrough-0.24.0.jar:/Users/borkdude/.m2/repository/org/commonmark/commonmark-ext-gfm-tables/0.24.0/commonmark-ext-gfm-tables-0.24.0.jar:/Users/borkdude/.m2/repository/org/commonmark/commonmark-ext-task-list-items/0.24.0/commonmark-ext-task-list-items-0.24.0.jar:/Users/borkdude/.m2/repository/fipp/fipp/0.6.27/fipp-0.6.27.jar:/Users/borkdude/.m2/repository/lambdaisland/clj-diff/1.4.78/clj-diff-1.4.78.jar:/Users/borkdude/.m2/repository/mvxcvi/arrangement/2.1.0/arrangement-2.1.0.jar:/Users/borkdude/.m2/repository/org/clojure/core.rrb-vector/0.2.0/core.rrb-vector-0.2.0.jar:/Users/borkdude/.m2/repository/org/clojure/core.specs.alpha/0.4.74/core.specs.alpha-0.4.74.jar:/Users/borkdude/.m2/repository/org/clojure/spec.alpha/0.5.238/spec.alpha-0.5.238.jar:/Users/borkdude/.m2/repository/org/clojure/tools.analyzer.jvm/1.3.2/tools.analyzer.jvm-1.3.2.jar:/Users/borkdude/.m2/repository/org/clojure/java.classpath/1.0.0/java.classpath-1.0.0.jar:/Users/borkdude/.m2/repository/org/nibor/autolink/autolink/0.11.0/autolink-0.11.0.jar:/Users/borkdude/.m2/repository/org/clojure/core.memoize/1.1.266/core.memoize-1.1.266.jar:/Users/borkdude/.m2/repository/org/clojure/tools.analyzer/1.2.0/tools.analyzer-1.2.0.jar:/Users/borkdude/.m2/repository/org/ow2/asm/asm/9.2/asm-9.2.jar:/Users/borkdude/.m2/repository/org/clojure/core.cache/1.1.234/core.cache-1.1.234.jar:/Users/borkdude/.m2/repository/org/clojure/data.priority-map/1.2.0/data.priority-map-1.2.0.jar' '-M' 'repro/vthread-storm/mini_repro.clj' 
+
+Heap settings and statistics:
+  Reserved hub pointer bits: 0b11111
+  Aligned chunk size: 524288
+  Large array threshold: 131072
+  Incremental collections: 6
+  Complete collections: 0
+  
+Heap usage:
+  Metaspace: 0.50M (0.50M in 1 aligned chunks, 0.00M in 0 unaligned chunks)
+  Eden: 45.00M (0.00M in 0 aligned chunks, 0.00M in 0 unaligned chunks)
+  Survivor-1: 4.00M (4.00M in 8 aligned chunks, 0.00M in 0 unaligned chunks)
+  Survivor-2: 1.00M (1.00M in 2 aligned chunks, 0.00M in 0 unaligned chunks)
+  Survivor-3: 1.00M (1.00M in 2 aligned chunks, 0.00M in 0 unaligned chunks)
+  Survivor-4: 1.00M (1.00M in 2 aligned chunks, 0.00M in 0 unaligned chunks)
+  Survivor-5: 0.50M (0.50M in 1 aligned chunks, 0.00M in 0 unaligned chunks)
+  Survivor-6: 0.50M (0.50M in 1 aligned chunks, 0.00M in 0 unaligned chunks)
+  Old: 2.82M (2.50M in 5 aligned chunks, 0.32M in 1 unaligned chunks)
+  
+GC policy:
+  Name: adaptive2
+  Max eden size: 11384389632
+  Max survivor size: 3797417984
+  Max young size: 11392778240
+  Max old size: 22785556480
+  Max heap size: 34178334720
+  
+Image heap:
+  Objects in aligned chunks
+    read-only: 0x0000000302080840 - 0x00000003049fc1f8
+    read-only relocatables: 0x000000030474acf8 - 0x00000003049fc1f8
+    writable: 0x00000003049fc1f8 - 0x0000000309b724a0
+    writeable patched: 0x0000000000000000 - 0x0000000000000000
+  Objects in unaligned chunks
+    writable: 0x0000000309b81b90 - 0x000000030a0ed1b8
+    read-only: 0x000000030a0f0590 - 0x000000030acf0688
+  
+Heap chunks: E=eden, S=survivor, O=old, F=free; A=aligned chunk, U=unaligned chunk; T=to space
+  |0x0000000300080000|0x0000000300080840, 0x00000003000e0f80, 0x0000000300100000| 75%|  M|A|T|
+  |0x0000000302080000|0x0000000302080840, 0x0000000302100000, 0x0000000302100000|100%|  I|A| |
+  |0x0000000302100000|0x0000000302100840, 0x0000000302180000, 0x0000000302180000|100%|  I|A| |
+  |0x0000000302180000|0x0000000302180840, 0x0000000302200000, 0x0000000302200000|100%|  I|A| |
+  |0x0000000302200000|0x0000000302200840, 0x000000030227fff8, 0x0000000302280000| 99%|  I|A| |
+  |0x0000000302280000|0x0000000302280840, 0x00000003022ffff8, 0x0000000302300000| 99%|  I|A| |
+  |0x0000000302300000|0x0000000302300840, 0x000000030237fff8, 0x0000000302380000| 99%|  I|A| |
+  |0x0000000302380000|0x0000000302380840, 0x00000003023ffff8, 0x0000000302400000| 99%|  I|A| |
+  |0x0000000302400000|0x0000000302400840, 0x0000000302480000, 0x0000000302480000|100%|  I|A| |
+  |0x0000000302480000|0x0000000302480840, 0x00000003024ffff8, 0x0000000302500000| 99%|  I|A| |
+  |0x0000000302500000|0x0000000302500840, 0x0000000302580000, 0x0000000302580000|100%|  I|A| |
+  |0x0000000302580000|0x0000000302580840, 0x0000000302600000, 0x0000000302600000|100%|  I|A| |
+  |0x0000000302600000|0x0000000302600840, 0x0000000302680000, 0x0000000302680000|100%|  I|A| |
+  |0x0000000302680000|0x0000000302680840, 0x0000000302700000, 0x0000000302700000|100%|  I|A| |
+  |0x0000000302700000|0x0000000302700840, 0x0000000302780000, 0x0000000302780000|100%|  I|A| |
+  |0x0000000302780000|0x0000000302780840, 0x00000003027ffff8, 0x0000000302800000| 99%|  I|A| |
+  |0x0000000302800000|0x0000000302800840, 0x0000000302880000, 0x0000000302880000|100%|  I|A| |
+  |0x0000000302880000|0x0000000302880840, 0x00000003028ffff8, 0x0000000302900000| 99%|  I|A| |
+  |0x0000000302900000|0x0000000302900840, 0x0000000302980000, 0x0000000302980000|100%|  I|A| |
+  |0x0000000302980000|0x0000000302980840, 0x0000000302a00000, 0x0000000302a00000|100%|  I|A| |
+  |0x0000000302a00000|0x0000000302a00840, 0x0000000302a80000, 0x0000000302a80000|100%|  I|A| |
+  |0x0000000302a80000|0x0000000302a80840, 0x0000000302b00000, 0x0000000302b00000|100%|  I|A| |
+  |0x0000000302b00000|0x0000000302b00840, 0x0000000302b7fff8, 0x0000000302b80000| 99%|  I|A| |
+  |0x0000000302b80000|0x0000000302b80840, 0x0000000302bffff8, 0x0000000302c00000| 99%|  I|A| |
+  |0x0000000302c00000|0x0000000302c00840, 0x0000000302c80000, 0x0000000302c80000|100%|  I|A| |
+  |0x0000000302c80000|0x0000000302c80840, 0x0000000302cffff8, 0x0000000302d00000| 99%|  I|A| |
+  |0x0000000302d00000|0x0000000302d00840, 0x0000000302d7fff8, 0x0000000302d80000| 99%|  I|A| |
+  |0x0000000302d80000|0x0000000302d80840, 0x0000000302dffff8, 0x0000000302e00000| 99%|  I|A| |
+  |0x0000000302e00000|0x0000000302e00840, 0x0000000302e80000, 0x0000000302e80000|100%|  I|A| |
+  |0x0000000302e80000|0x0000000302e80840, 0x0000000302effff8, 0x0000000302f00000| 99%|  I|A| |
+  |0x0000000302f00000|0x0000000302f00840, 0x0000000302f80000, 0x0000000302f80000|100%|  I|A| |
+  |0x0000000302f80000|0x0000000302f80840, 0x0000000303000000, 0x0000000303000000|100%|  I|A| |
+  |0x0000000303000000|0x0000000303000840, 0x0000000303080000, 0x0000000303080000|100%|  I|A| |
+  |0x0000000303080000|0x0000000303080840, 0x0000000303100000, 0x0000000303100000|100%|  I|A| |
+  |0x0000000303100000|0x0000000303100840, 0x000000030317fff8, 0x0000000303180000| 99%|  I|A| |
+  |0x0000000303180000|0x0000000303180840, 0x0000000303200000, 0x0000000303200000|100%|  I|A| |
+  |0x0000000303200000|0x0000000303200840, 0x0000000303280000, 0x0000000303280000|100%|  I|A| |
+  |0x0000000303280000|0x0000000303280840, 0x00000003032ffff8, 0x0000000303300000| 99%|  I|A| |
+  |0x0000000303300000|0x0000000303300840, 0x0000000303380000, 0x0000000303380000|100%|  I|A| |
+  |0x0000000303380000|0x0000000303380840, 0x0000000303400000, 0x0000000303400000|100%|  I|A| |
+  |0x0000000303400000|0x0000000303400840, 0x000000030347fff8, 0x0000000303480000| 99%|  I|A| |
+  |0x0000000303480000|0x0000000303480840, 0x0000000303500000, 0x0000000303500000|100%|  I|A| |
+  |0x0000000303500000|0x0000000303500840, 0x0000000303580000, 0x0000000303580000|100%|  I|A| |
+  |0x0000000303580000|0x0000000303580840, 0x0000000303600000, 0x0000000303600000|100%|  I|A| |
+  |0x0000000303600000|0x0000000303600840, 0x0000000303680000, 0x0000000303680000|100%|  I|A| |
+  |0x0000000303680000|0x0000000303680840, 0x00000003036ffff8, 0x0000000303700000| 99%|  I|A| |
+  |0x0000000303700000|0x0000000303700840, 0x0000000303780000, 0x0000000303780000|100%|  I|A| |
+  |0x0000000303780000|0x0000000303780840, 0x0000000303800000, 0x0000000303800000|100%|  I|A| |
+  |0x0000000303800000|0x0000000303800840, 0x000000030387fff8, 0x0000000303880000| 99%|  I|A| |
+  |0x0000000303880000|0x0000000303880840, 0x0000000303900000, 0x0000000303900000|100%|  I|A| |
+  |0x0000000303900000|0x0000000303900840, 0x0000000303980000, 0x0000000303980000|100%|  I|A| |
+  |0x0000000303980000|0x0000000303980840, 0x00000003039ffff8, 0x0000000303a00000| 99%|  I|A| |
+  |0x0000000303a00000|0x0000000303a00840, 0x0000000303a80000, 0x0000000303a80000|100%|  I|A| |
+  |0x0000000303a80000|0x0000000303a80840, 0x0000000303affff8, 0x0000000303b00000| 99%|  I|A| |
+  |0x0000000303b00000|0x0000000303b00840, 0x0000000303b80000, 0x0000000303b80000|100%|  I|A| |
+  |0x0000000303b80000|0x0000000303b80840, 0x0000000303c00000, 0x0000000303c00000|100%|  I|A| |
+  |0x0000000303c00000|0x0000000303c00840, 0x0000000303c7fff8, 0x0000000303c80000| 99%|  I|A| |
+  |0x0000000303c80000|0x0000000303c80840, 0x0000000303cffff8, 0x0000000303d00000| 99%|  I|A| |
+  |0x0000000303d00000|0x0000000303d00840, 0x0000000303d7fff8, 0x0000000303d80000| 99%|  I|A| |
+  |0x0000000303d80000|0x0000000303d80840, 0x0000000303dffff8, 0x0000000303e00000| 99%|  I|A| |
+  |0x0000000303e00000|0x0000000303e00840, 0x0000000303e7fff8, 0x0000000303e80000| 99%|  I|A| |
+  |0x0000000303e80000|0x0000000303e80840, 0x0000000303effff8, 0x0000000303f00000| 99%|  I|A| |
+  |0x0000000303f00000|0x0000000303f00840, 0x0000000303f7fff8, 0x0000000303f80000| 99%|  I|A| |
+  |0x0000000303f80000|0x0000000303f80840, 0x0000000304000000, 0x0000000304000000|100%|  I|A| |
+  |0x0000000304000000|0x0000000304000840, 0x000000030407fff8, 0x0000000304080000| 99%|  I|A| |
+  |0x0000000304080000|0x0000000304080840, 0x00000003040ffff8, 0x0000000304100000| 99%|  I|A| |
+  |0x0000000304100000|0x0000000304100840, 0x0000000304180000, 0x0000000304180000|100%|  I|A| |
+  |0x0000000304180000|0x0000000304180840, 0x00000003041ffff8, 0x0000000304200000| 99%|  I|A| |
+  |0x0000000304200000|0x0000000304200840, 0x000000030427fff8, 0x0000000304280000| 99%|  I|A| |
+  |0x0000000304280000|0x0000000304280840, 0x00000003042ffff8, 0x0000000304300000| 99%|  I|A| |
+  |0x0000000304300000|0x0000000304300840, 0x0000000304380000, 0x0000000304380000|100%|  I|A| |
+  |0x0000000304380000|0x0000000304380840, 0x00000003043ffff8, 0x0000000304400000| 99%|  I|A| |
+  |0x0000000304400000|0x0000000304400840, 0x0000000304480000, 0x0000000304480000|100%|  I|A| |
+  |0x0000000304480000|0x0000000304480840, 0x0000000304500000, 0x0000000304500000|100%|  I|A| |
+  |0x0000000304500000|0x0000000304500840, 0x0000000304580000, 0x0000000304580000|100%|  I|A| |
+  |0x0000000304580000|0x0000000304580840, 0x0000000304600000, 0x0000000304600000|100%|  I|A| |
+  |0x0000000304600000|0x0000000304600840, 0x000000030467fff8, 0x0000000304680000| 99%|  I|A| |
+  |0x0000000304680000|0x0000000304680840, 0x00000003046ffff8, 0x0000000304700000| 99%|  I|A| |
+  |0x0000000304700000|0x0000000304700840, 0x000000030477fff8, 0x0000000304780000| 99%|  I|A| |
+  |0x0000000304780000|0x0000000304780840, 0x0000000304800000, 0x0000000304800000|100%|  I|A| |
+  |0x0000000304800000|0x0000000304800840, 0x0000000304880000, 0x0000000304880000|100%|  I|A| |
+  |0x0000000304880000|0x0000000304880840, 0x0000000304900000, 0x0000000304900000|100%|  I|A| |
+  |0x0000000304900000|0x0000000304900840, 0x0000000304980000, 0x0000000304980000|100%|  I|A| |
+  |0x0000000304980000|0x0000000304980840, 0x00000003049ffff8, 0x0000000304a00000| 99%|  I|A| |
+  |0x0000000304a00000|0x0000000304a00840, 0x0000000304a80000, 0x0000000304a80000|100%|  I|A| |
+  |0x0000000304a80000|0x0000000304a80840, 0x0000000304affff8, 0x0000000304b00000| 99%|  I|A| |
+  |0x0000000304b00000|0x0000000304b00840, 0x0000000304b7fff8, 0x0000000304b80000| 99%|  I|A| |
+  |0x0000000304b80000|0x0000000304b80840, 0x0000000304bffff8, 0x0000000304c00000| 99%|  I|A| |
+  |0x0000000304c00000|0x0000000304c00840, 0x0000000304c80000, 0x0000000304c80000|100%|  I|A| |
+  |0x0000000304c80000|0x0000000304c80840, 0x0000000304d00000, 0x0000000304d00000|100%|  I|A| |
+  |0x0000000304d00000|0x0000000304d00840, 0x0000000304d80000, 0x0000000304d80000|100%|  I|A| |
+  |0x0000000304d80000|0x0000000304d80840, 0x0000000304e00000, 0x0000000304e00000|100%|  I|A| |
+  |0x0000000304e00000|0x0000000304e00840, 0x0000000304e80000, 0x0000000304e80000|100%|  I|A| |
+  |0x0000000304e80000|0x0000000304e80840, 0x0000000304effff8, 0x0000000304f00000| 99%|  I|A| |
+  |0x0000000304f00000|0x0000000304f00840, 0x0000000304f7fff8, 0x0000000304f80000| 99%|  I|A| |
+  |0x0000000304f80000|0x0000000304f80840, 0x0000000305000000, 0x0000000305000000|100%|  I|A| |
+  |0x0000000305000000|0x0000000305000840, 0x0000000305080000, 0x0000000305080000|100%|  I|A| |
+  |0x0000000305080000|0x0000000305080840, 0x0000000305100000, 0x0000000305100000|100%|  I|A| |
+  |0x0000000305100000|0x0000000305100840, 0x000000030517fff8, 0x0000000305180000| 99%|  I|A| |
+  |0x0000000305180000|0x0000000305180840, 0x00000003051ffff8, 0x0000000305200000| 99%|  I|A| |
+  |0x0000000305200000|0x0000000305200840, 0x0000000305280000, 0x0000000305280000|100%|  I|A| |
+  |0x0000000305280000|0x0000000305280840, 0x00000003052ffff8, 0x0000000305300000| 99%|  I|A| |
+  |0x0000000305300000|0x0000000305300840, 0x0000000305380000, 0x0000000305380000|100%|  I|A| |
+  |0x0000000305380000|0x0000000305380840, 0x0000000305400000, 0x0000000305400000|100%|  I|A| |
+  |0x0000000305400000|0x0000000305400840, 0x0000000305480000, 0x0000000305480000|100%|  I|A| |
+  |0x0000000305480000|0x0000000305480840, 0x00000003054ffff8, 0x0000000305500000| 99%|  I|A| |
+  |0x0000000305500000|0x0000000305500840, 0x000000030557fff8, 0x0000000305580000| 99%|  I|A| |
+  |0x0000000305580000|0x0000000305580840, 0x00000003055ffff8, 0x0000000305600000| 99%|  I|A| |
+  |0x0000000305600000|0x0000000305600840, 0x0000000305680000, 0x0000000305680000|100%|  I|A| |
+  |0x0000000305680000|0x0000000305680840, 0x0000000305700000, 0x0000000305700000|100%|  I|A| |
+  |0x0000000305700000|0x0000000305700840, 0x000000030577fff8, 0x0000000305780000| 99%|  I|A| |
+  |0x0000000305780000|0x0000000305780840, 0x0000000305800000, 0x0000000305800000|100%|  I|A| |
+  |0x0000000305800000|0x0000000305800840, 0x0000000305880000, 0x0000000305880000|100%|  I|A| |
+  |0x0000000305880000|0x0000000305880840, 0x0000000305900000, 0x0000000305900000|100%|  I|A| |
+  |0x0000000305900000|0x0000000305900840, 0x0000000305980000, 0x0000000305980000|100%|  I|A| |
+  |0x0000000305980000|0x0000000305980840, 0x0000000305a00000, 0x0000000305a00000|100%|  I|A| |
+  |0x0000000305a00000|0x0000000305a00840, 0x0000000305a80000, 0x0000000305a80000|100%|  I|A| |
+  |0x0000000305a80000|0x0000000305a80840, 0x0000000305affff8, 0x0000000305b00000| 99%|  I|A| |
+  |0x0000000305b00000|0x0000000305b00840, 0x0000000305b80000, 0x0000000305b80000|100%|  I|A| |
+  |0x0000000305b80000|0x0000000305b80840, 0x0000000305c00000, 0x0000000305c00000|100%|  I|A| |
+  |0x0000000305c00000|0x0000000305c00840, 0x0000000305c7fff8, 0x0000000305c80000| 99%|  I|A| |
+  |0x0000000305c80000|0x0000000305c80840, 0x0000000305cffff8, 0x0000000305d00000| 99%|  I|A| |
+  |0x0000000305d00000|0x0000000305d00840, 0x0000000305d80000, 0x0000000305d80000|100%|  I|A| |
+  |0x0000000305d80000|0x0000000305d80840, 0x0000000305e00000, 0x0000000305e00000|100%|  I|A| |
+  |0x0000000305e00000|0x0000000305e00840, 0x0000000305e7fff8, 0x0000000305e80000| 99%|  I|A| |
+  |0x0000000305e80000|0x0000000305e80840, 0x0000000305f00000, 0x0000000305f00000|100%|  I|A| |
+  |0x0000000305f00000|0x0000000305f00840, 0x0000000305f80000, 0x0000000305f80000|100%|  I|A| |
+  |0x0000000305f80000|0x0000000305f80840, 0x0000000305fffff8, 0x0000000306000000| 99%|  I|A| |
+  |0x0000000306000000|0x0000000306000840, 0x0000000306080000, 0x0000000306080000|100%|  I|A| |
+  |0x0000000306080000|0x0000000306080840, 0x0000000306100000, 0x0000000306100000|100%|  I|A| |
+  |0x0000000306100000|0x0000000306100840, 0x000000030617fff8, 0x0000000306180000| 99%|  I|A| |
+  |0x0000000306180000|0x0000000306180840, 0x00000003061ffff8, 0x0000000306200000| 99%|  I|A| |
+  |0x0000000306200000|0x0000000306200840, 0x0000000306280000, 0x0000000306280000|100%|  I|A| |
+  |0x0000000306280000|0x0000000306280840, 0x0000000306300000, 0x0000000306300000|100%|  I|A| |
+  |0x0000000306300000|0x0000000306300840, 0x0000000306380000, 0x0000000306380000|100%|  I|A| |
+  |0x0000000306380000|0x0000000306380840, 0x00000003063ffff8, 0x0000000306400000| 99%|  I|A| |
+  |0x0000000306400000|0x0000000306400840, 0x0000000306480000, 0x0000000306480000|100%|  I|A| |
+  |0x0000000306480000|0x0000000306480840, 0x0000000306500000, 0x0000000306500000|100%|  I|A| |
+  |0x0000000306500000|0x0000000306500840, 0x0000000306580000, 0x0000000306580000|100%|  I|A| |
+  |0x0000000306580000|0x0000000306580840, 0x0000000306600000, 0x0000000306600000|100%|  I|A| |
+  |0x0000000306600000|0x0000000306600840, 0x0000000306680000, 0x0000000306680000|100%|  I|A| |
+  |0x0000000306680000|0x0000000306680840, 0x0000000306700000, 0x0000000306700000|100%|  I|A| |
+  |0x0000000306700000|0x0000000306700840, 0x0000000306780000, 0x0000000306780000|100%|  I|A| |
+  |0x0000000306780000|0x0000000306780840, 0x0000000306800000, 0x0000000306800000|100%|  I|A| |
+  |0x0000000306800000|0x0000000306800840, 0x0000000306880000, 0x0000000306880000|100%|  I|A| |
+  |0x0000000306880000|0x0000000306880840, 0x0000000306900000, 0x0000000306900000|100%|  I|A| |
+  |0x0000000306900000|0x0000000306900840, 0x0000000306980000, 0x0000000306980000|100%|  I|A| |
+  |0x0000000306980000|0x0000000306980840, 0x00000003069ffff8, 0x0000000306a00000| 99%|  I|A| |
+  |0x0000000306a00000|0x0000000306a00840, 0x0000000306a80000, 0x0000000306a80000|100%|  I|A| |
+  |0x0000000306a80000|0x0000000306a80840, 0x0000000306b00000, 0x0000000306b00000|100%|  I|A| |
+  |0x0000000306b00000|0x0000000306b00840, 0x0000000306b80000, 0x0000000306b80000|100%|  I|A| |
+  |0x0000000306b80000|0x0000000306b80840, 0x0000000306c00000, 0x0000000306c00000|100%|  I|A| |
+  |0x0000000306c00000|0x0000000306c00840, 0x0000000306c80000, 0x0000000306c80000|100%|  I|A| |
+  |0x0000000306c80000|0x0000000306c80840, 0x0000000306d00000, 0x0000000306d00000|100%|  I|A| |
+  |0x0000000306d00000|0x0000000306d00840, 0x0000000306d80000, 0x0000000306d80000|100%|  I|A| |
+  |0x0000000306d80000|0x0000000306d80840, 0x0000000306e00000, 0x0000000306e00000|100%|  I|A| |
+  |0x0000000306e00000|0x0000000306e00840, 0x0000000306e7fff8, 0x0000000306e80000| 99%|  I|A| |
+  |0x0000000306e80000|0x0000000306e80840, 0x0000000306effff8, 0x0000000306f00000| 99%|  I|A| |
+  |0x0000000306f00000|0x0000000306f00840, 0x0000000306f80000, 0x0000000306f80000|100%|  I|A| |
+  |0x0000000306f80000|0x0000000306f80840, 0x0000000307000000, 0x0000000307000000|100%|  I|A| |
+  |0x0000000307000000|0x0000000307000840, 0x000000030707fff8, 0x0000000307080000| 99%|  I|A| |
+  |0x0000000307080000|0x0000000307080840, 0x00000003070ffff8, 0x0000000307100000| 99%|  I|A| |
+  |0x0000000307100000|0x0000000307100840, 0x0000000307180000, 0x0000000307180000|100%|  I|A| |
+  |0x0000000307180000|0x0000000307180840, 0x0000000307200000, 0x0000000307200000|100%|  I|A| |
+  |0x0000000307200000|0x0000000307200840, 0x000000030727fff8, 0x0000000307280000| 99%|  I|A| |
+  |0x0000000307280000|0x0000000307280840, 0x0000000307300000, 0x0000000307300000|100%|  I|A| |
+  |0x0000000307300000|0x0000000307300840, 0x0000000307380000, 0x0000000307380000|100%|  I|A| |
+  |0x0000000307380000|0x0000000307380840, 0x00000003073ffff8, 0x0000000307400000| 99%|  I|A| |
+  |0x0000000307400000|0x0000000307400840, 0x000000030747fff8, 0x0000000307480000| 99%|  I|A| |
+  |0x0000000307480000|0x0000000307480840, 0x0000000307500000, 0x0000000307500000|100%|  I|A| |
+  |0x0000000307500000|0x0000000307500840, 0x000000030757fff8, 0x0000000307580000| 99%|  I|A| |
+  |0x0000000307580000|0x0000000307580840, 0x0000000307600000, 0x0000000307600000|100%|  I|A| |
+  |0x0000000307600000|0x0000000307600840, 0x0000000307680000, 0x0000000307680000|100%|  I|A| |
+  |0x0000000307680000|0x0000000307680840, 0x0000000307700000, 0x0000000307700000|100%|  I|A| |
+  |0x0000000307700000|0x0000000307700840, 0x0000000307780000, 0x0000000307780000|100%|  I|A| |
+  |0x0000000307780000|0x0000000307780840, 0x00000003077ffff8, 0x0000000307800000| 99%|  I|A| |
+  |0x0000000307800000|0x0000000307800840, 0x0000000307880000, 0x0000000307880000|100%|  I|A| |
+  |0x0000000307880000|0x0000000307880840, 0x00000003078ffff8, 0x0000000307900000| 99%|  I|A| |
+  |0x0000000307900000|0x0000000307900840, 0x0000000307980000, 0x0000000307980000|100%|  I|A| |
+  |0x0000000307980000|0x0000000307980840, 0x0000000307a00000, 0x0000000307a00000|100%|  I|A| |
+  |0x0000000307a00000|0x0000000307a00840, 0x0000000307a7fff8, 0x0000000307a80000| 99%|  I|A| |
+  |0x0000000307a80000|0x0000000307a80840, 0x0000000307b00000, 0x0000000307b00000|100%|  I|A| |
+  |0x0000000307b00000|0x0000000307b00840, 0x0000000307b80000, 0x0000000307b80000|100%|  I|A| |
+  |0x0000000307b80000|0x0000000307b80840, 0x0000000307c00000, 0x0000000307c00000|100%|  I|A| |
+  |0x0000000307c00000|0x0000000307c00840, 0x0000000307c7fff8, 0x0000000307c80000| 99%|  I|A| |
+  |0x0000000307c80000|0x0000000307c80840, 0x0000000307cffff8, 0x0000000307d00000| 99%|  I|A| |
+  |0x0000000307d00000|0x0000000307d00840, 0x0000000307d80000, 0x0000000307d80000|100%|  I|A| |
+  |0x0000000307d80000|0x0000000307d80840, 0x0000000307e00000, 0x0000000307e00000|100%|  I|A| |
+  |0x0000000307e00000|0x0000000307e00840, 0x0000000307e80000, 0x0000000307e80000|100%|  I|A| |
+  |0x0000000307e80000|0x0000000307e80840, 0x0000000307f00000, 0x0000000307f00000|100%|  I|A| |
+  |0x0000000307f00000|0x0000000307f00840, 0x0000000307f80000, 0x0000000307f80000|100%|  I|A| |
+  |0x0000000307f80000|0x0000000307f80840, 0x0000000308000000, 0x0000000308000000|100%|  I|A| |
+  |0x0000000308000000|0x0000000308000840, 0x0000000308080000, 0x0000000308080000|100%|  I|A| |
+  |0x0000000308080000|0x0000000308080840, 0x00000003080ffff8, 0x0000000308100000| 99%|  I|A| |
+  |0x0000000308100000|0x0000000308100840, 0x000000030817fff8, 0x0000000308180000| 99%|  I|A| |
+  |0x0000000308180000|0x0000000308180840, 0x0000000308200000, 0x0000000308200000|100%|  I|A| |
+  |0x0000000308200000|0x0000000308200840, 0x000000030827fff8, 0x0000000308280000| 99%|  I|A| |
+  |0x0000000308280000|0x0000000308280840, 0x00000003082ffff8, 0x0000000308300000| 99%|  I|A| |
+  |0x0000000308300000|0x0000000308300840, 0x0000000308380000, 0x0000000308380000|100%|  I|A| |
+  |0x0000000308380000|0x0000000308380840, 0x0000000308400000, 0x0000000308400000|100%|  I|A| |
+  |0x0000000308400000|0x0000000308400840, 0x000000030847fff8, 0x0000000308480000| 99%|  I|A| |
+  |0x0000000308480000|0x0000000308480840, 0x00000003084ffff8, 0x0000000308500000| 99%|  I|A| |
+  |0x0000000308500000|0x0000000308500840, 0x000000030857fff8, 0x0000000308580000| 99%|  I|A| |
+  |0x0000000308580000|0x0000000308580840, 0x00000003085ffff8, 0x0000000308600000| 99%|  I|A| |
+  |0x0000000308600000|0x0000000308600840, 0x0000000308680000, 0x0000000308680000|100%|  I|A| |
+  |0x0000000308680000|0x0000000308680840, 0x00000003086ffff8, 0x0000000308700000| 99%|  I|A| |
+  |0x0000000308700000|0x0000000308700840, 0x000000030877fff8, 0x0000000308780000| 99%|  I|A| |
+  |0x0000000308780000|0x0000000308780840, 0x0000000308800000, 0x0000000308800000|100%|  I|A| |
+  |0x0000000308800000|0x0000000308800840, 0x000000030887fff8, 0x0000000308880000| 99%|  I|A| |
+  |0x0000000308880000|0x0000000308880840, 0x0000000308900000, 0x0000000308900000|100%|  I|A| |
+  |0x0000000308900000|0x0000000308900840, 0x0000000308980000, 0x0000000308980000|100%|  I|A| |
+  |0x0000000308980000|0x0000000308980840, 0x0000000308a00000, 0x0000000308a00000|100%|  I|A| |
+  |0x0000000308a00000|0x0000000308a00840, 0x0000000308a80000, 0x0000000308a80000|100%|  I|A| |
+  |0x0000000308a80000|0x0000000308a80840, 0x0000000308affff8, 0x0000000308b00000| 99%|  I|A| |
+  |0x0000000308b00000|0x0000000308b00840, 0x0000000308b80000, 0x0000000308b80000|100%|  I|A| |
+  |0x0000000308b80000|0x0000000308b80840, 0x0000000308bffff8, 0x0000000308c00000| 99%|  I|A| |
+  |0x0000000308c00000|0x0000000308c00840, 0x0000000308c80000, 0x0000000308c80000|100%|  I|A| |
+  |0x0000000308c80000|0x0000000308c80840, 0x0000000308cffff8, 0x0000000308d00000| 99%|  I|A| |
+  |0x0000000308d00000|0x0000000308d00840, 0x0000000308d80000, 0x0000000308d80000|100%|  I|A| |
+  |0x0000000308d80000|0x0000000308d80840, 0x0000000308e00000, 0x0000000308e00000|100%|  I|A| |
+  |0x0000000308e00000|0x0000000308e00840, 0x0000000308e80000, 0x0000000308e80000|100%|  I|A| |
+  |0x0000000308e80000|0x0000000308e80840, 0x0000000308effff8, 0x0000000308f00000| 99%|  I|A| |
+  |0x0000000308f00000|0x0000000308f00840, 0x0000000308f7fff8, 0x0000000308f80000| 99%|  I|A| |
+  |0x0000000308f80000|0x0000000308f80840, 0x0000000309000000, 0x0000000309000000|100%|  I|A| |
+  |0x0000000309000000|0x0000000309000840, 0x0000000309080000, 0x0000000309080000|100%|  I|A| |
+  |0x0000000309080000|0x0000000309080840, 0x00000003090ffff8, 0x0000000309100000| 99%|  I|A| |
+  |0x0000000309100000|0x0000000309100840, 0x000000030917fff8, 0x0000000309180000| 99%|  I|A| |
+  |0x0000000309180000|0x0000000309180840, 0x00000003091ffff8, 0x0000000309200000| 99%|  I|A| |
+  |0x0000000309200000|0x0000000309200840, 0x000000030927fff8, 0x0000000309280000| 99%|  I|A| |
+  |0x0000000309280000|0x0000000309280840, 0x0000000309300000, 0x0000000309300000|100%|  I|A| |
+  |0x0000000309300000|0x0000000309300840, 0x000000030937fff8, 0x0000000309380000| 99%|  I|A| |
+  |0x0000000309380000|0x0000000309380840, 0x0000000309400000, 0x0000000309400000|100%|  I|A| |
+  |0x0000000309400000|0x0000000309400840, 0x0000000309480000, 0x0000000309480000|100%|  I|A| |
+  |0x0000000309480000|0x0000000309480840, 0x0000000309500000, 0x0000000309500000|100%|  I|A| |
+  |0x0000000309500000|0x0000000309500840, 0x000000030957fff8, 0x0000000309580000| 99%|  I|A| |
+  |0x0000000309580000|0x0000000309580840, 0x0000000309600000, 0x0000000309600000|100%|  I|A| |
+  |0x0000000309600000|0x0000000309600840, 0x0000000309680000, 0x0000000309680000|100%|  I|A| |
+  |0x0000000309680000|0x0000000309680840, 0x0000000309700000, 0x0000000309700000|100%|  I|A| |
+  |0x0000000309700000|0x0000000309700840, 0x000000030977fff8, 0x0000000309780000| 99%|  I|A| |
+  |0x0000000309780000|0x0000000309780840, 0x00000003097ffff8, 0x0000000309800000| 99%|  I|A| |
+  |0x0000000309800000|0x0000000309800840, 0x000000030987fff8, 0x0000000309880000| 99%|  I|A| |
+  |0x0000000309880000|0x0000000309880840, 0x00000003098ffff8, 0x0000000309900000| 99%|  I|A| |
+  |0x0000000309900000|0x0000000309900840, 0x0000000309980000, 0x0000000309980000|100%|  I|A| |
+  |0x0000000309980000|0x0000000309980840, 0x0000000309a00000, 0x0000000309a00000|100%|  I|A| |
+  |0x0000000309a00000|0x0000000309a00840, 0x0000000309a7fff8, 0x0000000309a80000| 99%|  I|A| |
+  |0x0000000309a80000|0x0000000309a80840, 0x0000000309affff8, 0x0000000309b00000| 99%|  I|A| |
+  |0x0000000309b00000|0x0000000309b00840, 0x0000000309b724a0, 0x0000000309b80000| 89%|  I|A| |
+  |0x0000000309b80000|0x0000000309b81b90, 0x0000000309eec168, 0x0000000309eec168|100%|  I|U| |
+  |0x0000000309eec168|0x0000000309eed1a8, 0x000000030a0ed1b8, 0x000000030a0ed1b8|100%|  I|U| |
+  |0x000000030a0ed1b8|0x000000030a0f0590, 0x000000030a7637d0, 0x000000030a7637d0|100%|  I|U| |
+  |0x000000030a7637d0|0x000000030a7658d0, 0x000000030ab7e7e0, 0x000000030ab7e7e0|100%|  I|U| |
+  |0x000000030ab7e7e0|0x000000030ab7edf0, 0x000000030ac39ad8, 0x000000030ac39ad8|100%|  I|U| |
+  |0x000000030ac39ad8|0x000000030ac3a0c8, 0x000000030acf0688, 0x000000030acf0688|100%|  I|U| |
+  |0x000000030da00000|0x000000030da00840, 0x000000030da07c60, 0x000000030da80000|  5%|  E|A| |
+  |0x000000030d980000|0x000000030d980840, 0x000000030d9ffad8, 0x000000030da00000| 99%|  E|A| |
+  |0x000000030d900000|0x000000030d900840, 0x000000030d980000, 0x000000030d980000|100%|  E|A| |
+  |0x000000030d880000|0x000000030d880840, 0x000000030d8ffb08, 0x000000030d900000| 99%|  E|A| |
+  |0x000000030d800000|0x000000030d800840, 0x000000030d87fe00, 0x000000030d880000| 99%|  E|A| |
+  |0x000000030d780000|0x000000030d780840, 0x000000030d7ffff8, 0x000000030d800000| 99%|  E|A| |
+  |0x000000030d700000|0x000000030d700840, 0x000000030d780000, 0x000000030d780000|100%|  E|A| |
+  |0x000000030d680000|0x000000030d680840, 0x000000030d6ff938, 0x000000030d700000| 99%|  E|A| |
+  |0x000000030d600000|0x000000030d600840, 0x000000030d67fd48, 0x000000030d680000| 99%|  E|A| |
+  |0x000000030d580000|0x000000030d580840, 0x000000030d5ffab0, 0x000000030d600000| 99%|  E|A| |
+  |0x000000030d500000|0x000000030d500840, 0x000000030d580000, 0x000000030d580000|100%|  E|A| |
+  |0x000000030d480000|0x000000030d480840, 0x000000030d4ffac8, 0x000000030d500000| 99%|  E|A| |
+  |0x000000030d400000|0x000000030d400840, 0x000000030d480000, 0x000000030d480000|100%|  E|A| |
+  |0x000000030d380000|0x000000030d380840, 0x000000030d3ff990, 0x000000030d400000| 99%|  E|A| |
+  |0x000000030d300000|0x000000030d300840, 0x000000030d380000, 0x000000030d380000|100%|  E|A| |
+  |0x000000030d280000|0x000000030d280840, 0x000000030d2ff880, 0x000000030d300000| 99%|  E|A| |
+  |0x000000030d200000|0x000000030d200840, 0x000000030d27ffd0, 0x000000030d280000| 99%|  E|A| |
+  |0x000000030d180000|0x000000030d180840, 0x000000030d200000, 0x000000030d200000|100%|  E|A| |
+  |0x000000030d100000|0x000000030d100840, 0x000000030d17fe98, 0x000000030d180000| 99%|  E|A| |
+  |0x000000030d080000|0x000000030d080840, 0x000000030d100000, 0x000000030d100000|100%|  E|A| |
+  |0x000000030d000000|0x000000030d000840, 0x000000030d080000, 0x000000030d080000|100%|  E|A| |
+  |0x000000030cf80000|0x000000030cf80840, 0x000000030cfffa38, 0x000000030d000000| 99%|  E|A| |
+  |0x000000030cf00000|0x000000030cf00840, 0x000000030cf80000, 0x000000030cf80000|100%|  E|A| |
+  |0x000000030ce80000|0x000000030ce80840, 0x000000030ceffe40, 0x000000030cf00000| 99%|  E|A| |
+  |0x000000030ce00000|0x000000030ce00840, 0x000000030ce80000, 0x000000030ce80000|100%|  E|A| |
+  |0x000000030cd80000|0x000000030cd80840, 0x000000030cdffca0, 0x000000030ce00000| 99%|  E|A| |
+  |0x000000030cd00000|0x000000030cd00840, 0x000000030cd7fe48, 0x000000030cd80000| 99%|  E|A| |
+  |0x000000030cc80000|0x000000030cc80840, 0x000000030cd00000, 0x000000030cd00000|100%|  E|A| |
+  |0x000000030cc00000|0x000000030cc00840, 0x000000030cc80000, 0x000000030cc80000|100%|  E|A| |
+  |0x000000030cb80000|0x000000030cb80840, 0x000000030cbff9e0, 0x000000030cc00000| 99%|  E|A| |
+  |0x000000030cb00000|0x000000030cb00840, 0x000000030cb7ffe0, 0x000000030cb80000| 99%|  E|A| |
+  |0x000000030ca80000|0x000000030ca80840, 0x000000030caffc28, 0x000000030cb00000| 99%|  E|A| |
+  |0x000000030ca00000|0x000000030ca00840, 0x000000030ca80000, 0x000000030ca80000|100%|  E|A| |
+  |0x000000030c980000|0x000000030c980840, 0x000000030ca00000, 0x000000030ca00000|100%|  E|A| |
+  |0x000000030c900000|0x000000030c900840, 0x000000030c97fac8, 0x000000030c980000| 99%|  E|A| |
+  |0x000000030c880000|0x000000030c880840, 0x000000030c8ffff8, 0x000000030c900000| 99%|  E|A| |
+  |0x000000030c800000|0x000000030c800840, 0x000000030c880000, 0x000000030c880000|100%|  E|A| |
+  |0x000000030c780000|0x000000030c780840, 0x000000030c7ffa90, 0x000000030c800000| 99%|  E|A| |
+  |0x000000030c700000|0x000000030c700840, 0x000000030c780000, 0x000000030c780000|100%|  E|A| |
+  |0x000000030c680000|0x000000030c680840, 0x000000030c700000, 0x000000030c700000|100%|  E|A| |
+  |0x000000030c600000|0x000000030c600840, 0x000000030c67fe80, 0x000000030c680000| 99%|  E|A| |
+  |0x000000030c580000|0x000000030c580840, 0x000000030c600000, 0x000000030c600000|100%|  E|A| |
+  |0x000000030c500000|0x000000030c500840, 0x000000030c580000, 0x000000030c580000|100%|  E|A| |
+  |0x000000030c480000|0x000000030c480840, 0x000000030c500000, 0x000000030c500000|100%|  E|A| |
+  |0x000000030c400000|0x000000030c400840, 0x000000030c47fff8, 0x000000030c480000| 99%|  E|A| |
+  |0x000000030c380000|0x000000030c380840, 0x000000030c3fff08, 0x000000030c400000| 99%|  E|A| |
+  |0x000000030c300000|0x000000030c300840, 0x000000030c380000, 0x000000030c380000|100%|  E|A| |
+  |0x000000030c280000|0x000000030c280840, 0x000000030c2ffa28, 0x000000030c300000| 99%|  E|A| |
+  |0x000000030c200000|0x000000030c200840, 0x000000030c280000, 0x000000030c280000|100%|  E|A| |
+  |0x000000030c180000|0x000000030c180840, 0x000000030c200000, 0x000000030c200000|100%|  E|A| |
+  |0x000000030c100000|0x000000030c100840, 0x000000030c17faf0, 0x000000030c180000| 99%|  E|A| |
+  |0x000000030c080000|0x000000030c080840, 0x000000030c100000, 0x000000030c100000|100%|  E|A| |
+  |0x000000030c000000|0x000000030c000840, 0x000000030c080000, 0x000000030c080000|100%|  E|A| |
+  |0x000000030bf80000|0x000000030bf80840, 0x000000030c000000, 0x000000030c000000|100%|  E|A| |
+  |0x000000030bf00000|0x000000030bf00840, 0x000000030bf80000, 0x000000030bf80000|100%|  E|A| |
+  |0x000000030be80000|0x000000030be80840, 0x000000030bf00000, 0x000000030bf00000|100%|  E|A| |
+  |0x000000030be00000|0x000000030be00840, 0x000000030be80000, 0x000000030be80000|100%|  E|A| |
+  |0x000000030bd80000|0x000000030bd80840, 0x000000030be00000, 0x000000030be00000|100%|  E|A| |
+  |0x000000030bd00000|0x000000030bd00840, 0x000000030bd80000, 0x000000030bd80000|100%|  E|A| |
+  |0x000000030bc80000|0x000000030bc80840, 0x000000030bd00000, 0x000000030bd00000|100%|  E|A| |
+  |0x000000030bc00000|0x000000030bc00840, 0x000000030bc80000, 0x000000030bc80000|100%|  E|A| |
+  |0x000000030bb80000|0x000000030bb80840, 0x000000030bc00000, 0x000000030bc00000|100%|  E|A| |
+  |0x000000030bb00000|0x000000030bb00840, 0x000000030bb80000, 0x000000030bb80000|100%|  E|A| |
+  |0x000000030ba80000|0x000000030ba80840, 0x000000030bb00000, 0x000000030bb00000|100%|  E|A| |
+  |0x000000030ba00000|0x000000030ba00840, 0x000000030ba80000, 0x000000030ba80000|100%|  E|A| |
+  |0x000000030b980000|0x000000030b980840, 0x000000030ba00000, 0x000000030ba00000|100%|  E|A| |
+  |0x000000030b900000|0x000000030b900840, 0x000000030b980000, 0x000000030b980000|100%|  E|A| |
+  |0x000000030b880000|0x000000030b880840, 0x000000030b900000, 0x000000030b900000|100%|  E|A| |
+  |0x000000030b800000|0x000000030b800840, 0x000000030b880000, 0x000000030b880000|100%|  E|A| |
+  |0x000000030b780000|0x000000030b780840, 0x000000030b800000, 0x000000030b800000|100%|  E|A| |
+  |0x000000030b700000|0x000000030b700840, 0x000000030b780000, 0x000000030b780000|100%|  E|A| |
+  |0x000000030b680000|0x000000030b680840, 0x000000030b700000, 0x000000030b700000|100%|  E|A| |
+  |0x000000030b600000|0x000000030b600840, 0x000000030b680000, 0x000000030b680000|100%|  E|A| |
+  |0x000000030b580000|0x000000030b580840, 0x000000030b600000, 0x000000030b600000|100%|  E|A| |
+  |0x000000030b500000|0x000000030b500840, 0x000000030b580000, 0x000000030b580000|100%|  E|A| |
+  |0x000000030b480000|0x000000030b480840, 0x000000030b500000, 0x000000030b500000|100%|  E|A| |
+  |0x000000030b400000|0x000000030b400840, 0x000000030b480000, 0x000000030b480000|100%|  E|A| |
+  |0x000000030b380000|0x000000030b380840, 0x000000030b400000, 0x000000030b400000|100%|  E|A| |
+  |0x000000030b300000|0x000000030b300840, 0x000000030b380000, 0x000000030b380000|100%|  E|A| |
+  |0x000000030b280000|0x000000030b280840, 0x000000030b300000, 0x000000030b300000|100%|  E|A| |
+  |0x000000030b200000|0x000000030b200840, 0x000000030b280000, 0x000000030b280000|100%|  E|A| |
+  |0x000000030b180000|0x000000030b180840, 0x000000030b200000, 0x000000030b200000|100%|  E|A| |
+  |0x000000030b100000|0x000000030b100840, 0x000000030b180000, 0x000000030b180000|100%|  E|A| |
+  |0x000000030b080000|0x000000030b080840, 0x000000030b100000, 0x000000030b100000|100%|  E|A| |
+  |0x000000030b000000|0x000000030b000840, 0x000000030b080000, 0x000000030b080000|100%|  E|A| |
+  |0x000000030af80000|0x000000030af80840, 0x000000030b000000, 0x000000030b000000|100%|  E|A| |
+  |0x000000030af00000|0x000000030af00840, 0x000000030af80000, 0x000000030af80000|100%|  E|A| |
+  |0x000000030ae80000|0x000000030ae80840, 0x000000030af00000, 0x000000030af00000|100%|  E|A| |
+  |0x000000030ae00000|0x000000030ae00840, 0x000000030ae80000, 0x000000030ae80000|100%|  E|A| |
+  |0x000000030ad00000|0x000000030ad00840, 0x000000030ad80000, 0x000000030ad80000|100%|  E|A| |
+  |0x000000030db80000|0x000000030db80840, 0x000000030dc00000, 0x000000030dc00000|100%| S1|A| |
+  |0x000000030e600000|0x000000030e600840, 0x000000030e67f110, 0x000000030e680000| 99%| S1|A| |
+  |0x000000030e580000|0x000000030e580840, 0x000000030e5fd890, 0x000000030e600000| 98%| S1|A| |
+  |0x000000030e100000|0x000000030e100840, 0x000000030e17d890, 0x000000030e180000| 98%| S1|A| |
+  |0x000000030e200000|0x000000030e200840, 0x000000030e27d890, 0x000000030e280000| 98%| S1|A| |
+  |0x000000030e280000|0x000000030e280840, 0x000000030e2fffd8, 0x000000030e300000| 99%| S1|A| |
+  |0x000000030dc00000|0x000000030dc00840, 0x000000030dc7fff8, 0x000000030dc80000| 99%| S1|A| |
+  |0x000000030e780000|0x000000030e780840, 0x000000030e7ada50, 0x000000030e800000| 35%| S1|A| |
+  |0x000000030e300000|0x000000030e300840, 0x000000030e37ffc8, 0x000000030e380000| 99%| S2|A| |
+  |0x000000030e800000|0x000000030e800840, 0x000000030e863660, 0x000000030e880000| 77%| S2|A| |
+  |0x000000030e080000|0x000000030e080840, 0x000000030e0ffff8, 0x000000030e100000| 99%| S3|A| |
+  |0x000000030e880000|0x000000030e880840, 0x000000030e89e288, 0x000000030e900000| 23%| S3|A| |
+  |0x000000030e180000|0x000000030e180840, 0x000000030e1fffe8, 0x000000030e200000| 99%| S4|A| |
+  |0x000000030e900000|0x000000030e900840, 0x000000030e919900, 0x000000030e980000| 19%| S4|A| |
+  |0x000000030e380000|0x000000030e380840, 0x000000030e400000, 0x000000030e400000|100%| S5|A| |
+  |0x000000030e400000|0x000000030e400840, 0x000000030e480000, 0x000000030e480000|100%| S6|A| |
+  |0x000000030e700000|0x000000030e700840, 0x000000030e77e578, 0x000000030e780000| 98%|  O|A| |
+  |0x000000030e980000|0x000000030e980840, 0x000000030e9ffff0, 0x000000030ea00000| 99%|  O|A| |
+  |0x000000030ea00000|0x000000030ea00840, 0x000000030ea7fff0, 0x000000030ea80000| 99%|  O|A| |
+  |0x000000030ea80000|0x000000030ea80840, 0x000000030eafffe8, 0x000000030eb00000| 99%|  O|A| |
+  |0x000000030eb00000|0x000000030eb00840, 0x000000030eb719c0, 0x000000030eb80000| 88%|  O|A| |
+  |0x000000030ad80000|0x000000030ad802d8, 0x000000030add3a50, 0x000000030add3a50|100%|  O|U| |
+  |0x000000030e000000|0x000000030e000840, 0x000000030e000840, 0x000000030e080000|  0%|  F|A| |
+  |0x000000030da80000|0x000000030da80840, 0x000000030da80840, 0x000000030db00000|  0%|  F|A| |
+  |0x000000030e500000|0x000000030e500840, 0x000000030e500840, 0x000000030e580000|  0%|  F|A| |
+  |0x000000030df00000|0x000000030df00840, 0x000000030df00840, 0x000000030df80000|  0%|  F|A| |
+  |0x000000030e480000|0x000000030e480840, 0x000000030e480840, 0x000000030e500000|  0%|  F|A| |
+  |0x000000030df80000|0x000000030df80840, 0x000000030df80840, 0x000000030e000000|  0%|  F|A| |
+  |0x000000030dd80000|0x000000030dd80840, 0x000000030dd80840, 0x000000030de00000|  0%|  F|A| |
+  |0x000000030dc80000|0x000000030dc80840, 0x000000030dc80840, 0x000000030dd00000|  0%|  F|A| |
+  |0x000000030e680000|0x000000030e680840, 0x000000030e680840, 0x000000030e700000|  0%|  F|A| |
+  |0x000000030dd00000|0x000000030dd00840, 0x000000030dd00840, 0x000000030dd80000|  0%|  F|A| |
+  |0x000000030de80000|0x000000030de80840, 0x000000030de80840, 0x000000030df00000|  0%|  F|A| |
+  |0x000000030de00000|0x000000030de00840, 0x000000030de00840, 0x000000030de80000|  0%|  F|A| |
+  |0x000000030db00000|0x000000030db00840, 0x000000030db00840, 0x000000030db80000|  0%|  F|A| |
+  
+Segfault detected, aborting process. Use '-XX:-InstallSegfaultHandler' to disable the segfault handler at run time and create a core dump instead. Rebuild with '-R:-InstallSegfaultHandler' to disable the handler permanently at build time.
+
