@@ -108,10 +108,7 @@
 ;; Test namespaces to exclude per library (segfault in Crema).
 ;; These are excluded from the test-runner's namespace regex.
 (def skip-namespaces
-  {;; Thread/sleep compile NPE in this ns (unrelated to Crema)
-   'org.clojure/core.async
-   ["clojure.core.pipeline-test"]
-   ;; Excluded by cheshire's own test-selectors; defspec macro
+  {;; Excluded by cheshire's own test-selectors; defspec macro
    ;; implicitly evals clojure.data.generators symbols without requiring it
    'cheshire/cheshire
    ["cheshire.test.generative"]})
