@@ -13,11 +13,18 @@ sites, or occasionally as a hang:
 
 This is the cause of the core.async test suite crashes.
 
+## Status
+
+Reported as [GH-13925](https://github.com/oracle/graal/issues/13925)
+(GR-77094). Fixed by [PR #13963](https://github.com/oracle/graal/pull/13963)
+(commit `93ee18630bc`, 2026-07-13). Verified fixed in 25i2-25.0.3-ea.04: both
+repros and the full core.async test namespaces pass.
+
 ## Version
 
-Oracle GraalVM 25.1.3+9.1 and 25i2-25.0.3-ea.01 (both jvmci-25.1-b19), native
-image, `-H:+RuntimeClassLoading`. The older `repro/forkjoin` segfault is fixed
-on these builds. This is a different bug.
+Reproduces on Oracle GraalVM 25.1.3+9.1 through 25i2-25.0.3-ea.03 (all
+jvmci-25.1-b19), native image, `-H:+RuntimeClassLoading`. The older
+`repro/forkjoin` segfault is fixed on these builds. This is a different bug.
 
 ## Reproduce (pure Java)
 

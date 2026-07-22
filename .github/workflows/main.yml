@@ -14,22 +14,22 @@ jobs:
             arch: amd64
             platform: linux
             ext: ""
-            graalvm_asset: graalvm-jdk-25i2-25.0.3-ea.01_linux-x64_bin.tar.gz
+            graalvm_asset: graalvm-jdk-25i2-25.0.3-ea.04_linux-x64_bin.tar.gz
           - os: macos-latest
             arch: aarch64
             platform: macos
             ext: ""
-            graalvm_asset: graalvm-jdk-25i2-25.0.3-ea.01_macos-aarch64_bin.tar.gz
+            graalvm_asset: graalvm-jdk-25i2-25.0.3-ea.04_macos-aarch64_bin.tar.gz
           - os: windows-latest
             arch: amd64
             platform: windows
             ext: ".exe"
-            graalvm_asset: graalvm-jdk-25i2-25.0.3-ea.01_windows-x64_bin.zip
+            graalvm_asset: graalvm-jdk-25i2-25.0.3-ea.04_windows-x64_bin.zip
 
     runs-on: ${{ matrix.os }}
 
     env:
-      GRAALVM_EA_TAG: jdk-25i2-25.0.3-ea.01
+      GRAALVM_EA_TAG: jdk-25i2-25.0.3-ea.04
 
     steps:
       - name: Checkout repository

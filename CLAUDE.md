@@ -53,4 +53,4 @@ bb run-lib-tests medley/medley
 - `Preserve=package=java.lang` was added in ea20 to fix `StringConcat` generated classes crashing with "Method not compiled". Without it, any runtime-loaded Java code using string concatenation (`+` on strings, which compiles to `invokedynamic makeConcatWithConstants`) would segfault. This fixed both clj-yaml and commonmark-java's inline parsing.
 - Some tests are skipped per-library due to Crema limitations (see `skip-tests` and `skip-namespaces` in `bb/run_lib_tests.clj`)
 - The binary is ~175MB due to preserved packages and Crema interpreter (shrunk from ~195MB on ea20 to ~175MB on ea21)
-- ForkJoinPool / virtual thread segfault still reproduces on ea21 (jvmci-25.1-b17) — see `repro/forkjoin/`. Blocks the skipped core.async namespaces.
+- ForkJoinPool / virtual thread segfault (`repro/forkjoin/`) fixed on the jvmci-25.1-b19 line. A second vthread memory corruption (`repro/core-async-vthread-segfault/`, [GH-13925](https://github.com/oracle/graal/issues/13925)) crashed core.async's async-test; fixed in 25i2-25.0.3-ea.04 — full core.async test namespaces pass there.
