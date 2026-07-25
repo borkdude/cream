@@ -18,6 +18,8 @@
          "-H:+UnlockExperimentalVMOptions"
          "-H:Name=cream"
          "-H:+RuntimeClassLoading"
+         ;; Ristretto: JIT-compile runtime-loaded bytecode instead of interpreting
+         "-H:+GraalJITCompileAtRuntime"
          "-H:ConfigurationFileDirectories=."
          "-H:IncludeResources=clojure/.*"
          ;; Minimal Preserve set — verified by bb/test_preserve.clj
