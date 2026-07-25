@@ -128,15 +128,11 @@ filesystem). Pure Clojure code works without `JAVA_HOME`.
 
 - May need `JAVA_HOME` for Java interop (some JDK classes are loaded at runtime; pure Clojure works without it)
 - Requires a lightly patched Clojure fork (minor workarounds for Crema
-  quirks in `RT.java`, `Var.java`, and `Compiler.java`,
+  quirks in `RT.java` and `Var.java`,
   [details](doc/technical.md#fork-changes))
 - Java enum support fixed in GraalVM ea17 ([oracle/graal#13034](https://github.com/oracle/graal/issues/13034))
-- `Class.forName` not dispatchable ([oracle/graal#13031](https://github.com/oracle/graal/issues/13031):
-  GraalVM inlines `Class.forName` substitutions at call sites, so Crema's
-  interpreter can't dispatch to it; the Clojure fork redirects to
-  `RT.classForName` as a workaround, but Java `.class` files calling
-  `Class.forName` directly will still fail)
-- Large binary (~175MB, includes Crema interpreter and preserved packages)
+- Large binary (~200MiB, includes Crema interpreter, Ristretto JIT and
+  preserved packages)
 - Crema is EA (GraalVM's RuntimeClassLoading is experimental and only
   available in [EA builds](https://github.com/graalvm/oracle-graalvm-ea-builds))
 
@@ -150,10 +146,10 @@ workarounds.
 | Clojure | Full JVM Clojure (1.13 fork) | SCI interpreter (subset) |
 | Library loading | Any library from JARs at runtime | Any library (with built-in classes, SCI/deftype limitations) |
 | Java interop | Full (runtime class loading) | Limited to compiled-in classes |
-| Startup | ~20ms | ~20ms |
-| Binary size | ~175MB | ~70MB |
+| Startup | ~7ms | ~10ms |
+| Binary size | ~200MiB | ~68MiB |
 | Standalone | Mostly (may need `JAVA_HOME` for Java interop) | Yes |
-| Loop 10M iterations* | ~945ms | ~167ms |
+| Loop 10M iterations* | ~21ms | ~173ms |
 | Compile time (GitHub Actions, linux-amd64) | ~10min | ~3min |
 | Maturity | Experimental | Production-ready |
 
@@ -163,36 +159,38 @@ Java interop is faster in cream since it calls methods directly rather than
 through SCI's reflection layer:
 
 ```sh
-# 100K StringBuilder appends, cream is ~2x faster
+# 100K StringBuilder appends, cream is ~3x faster
 $ ./cream -M -e '(time (let [sb (StringBuilder.)] (dotimes [i 100000] (.append sb (str i))) (.length sb)))'
-"Elapsed time: 32 msecs"
+"Elapsed time: 20.593417 msecs"
 
 $ bb -e '(time (let [sb (StringBuilder.)] (dotimes [i 100000] (.append sb (str i))) (.length sb)))'
-"Elapsed time: 72 msecs"
+"Elapsed time: 65.012708 msecs"
 ```
 
-Some perceived difference in loading/parsing time of pure clojure code and runtime performance. Some of these could be addressed by the [addition](https://github.com/oracle/graal/issues/11327#issuecomment-3914916673) of a JIT to Crema:
+Babashka still loads pure Clojure code faster. Cream runs it faster once
+loaded, since `-H:+GraalJITCompileAtRuntime` compiles runtime-loaded bytecode
+instead of interpreting it:
 
 ```sh
 $ bb -cp "$(clojure -Spath -Sdeps '{:deps {dev.weavejester/medley {:mvn/version "1.9.0"}}}')" -e '(time (require (quote [medley.core :as mc]))) (time (dotimes [i 100000] (mc/greatest 5 2 1 3 4)))'
-"Elapsed time: 31.452928 msecs"
-"Elapsed time: 347.639424 msecs"
+"Elapsed time: 4.9255 msecs"
+"Elapsed time: 62.024166 msecs"
 
 $ ./cream -Scp "$(clojure -Spath -Sdeps '{:deps {dev.weavejester/medley {:mvn/version "1.9.0"}}}')" -M -e '(time (require (quote [medley.core :as mc]))) (time (dotimes [i 100000] (mc/greatest 5 2 1 3 4)))'
 
 Reflection warning, medley/core.cljc:519:25 - call to java.util.ArrayList ctor can't be resolved.
-"Elapsed time: 122.997416 msecs"
-"Elapsed time: 785.789744 msecs"
+"Elapsed time: 45.207875 msecs"
+"Elapsed time: 30.8955 msecs"
 
 $ ./cream -Scp "$(clojure -Spath -Sdeps '{:deps {camel-snake-kebab/camel-snake-kebab {:mvn/version "0.4.3"}}}')" -M -e '(time (require (quote [camel-snake-kebab.core :as csk]))) (time (dotimes [i 100000] (csk/->SCREAMING_SNAKE_CASE "I am constant")))'
 
-"Elapsed time: 124.247888 msecs"
-"Elapsed time: 11771.946679 msecs"
+"Elapsed time: 63.072834 msecs"
+"Elapsed time: 246.68125 msecs"
 
 $ bb -cp "$(clojure -Spath -Sdeps '{:deps {camel-snake-kebab/camel-snake-kebab {:mvn/version "0.4.3"}}}')" -e '(time (require (quote [camel-snake-kebab.core :as csk]))) (time (dotimes [i 100000] (csk/->SCREAMING_SNAKE_CASE "I am constant")))'
 
-"Elapsed time: 25.805933 msecs"
-"Elapsed time: 3285.816775 msecs"
+"Elapsed time: 4.244083 msecs"
+"Elapsed time: 551.424208 msecs"
 ```
 
 When cream might make sense: you need full Clojure compatibility, arbitrary
@@ -254,8 +252,8 @@ Requires a GraalVM EA build with RuntimeClassLoading support.
 
 - Fully standalone binary: investigate whether JRT metadata can be bundled
   in the binary to eliminate the `JAVA_HOME` requirement for Java interop
-- Reduce binary size: currently ~175MB due to preserved packages and
-  Crema interpreter overhead
+- Reduce binary size: currently ~200MiB due to preserved packages, the
+  Crema interpreter and the Ristretto JIT
 - nREPL support: enable interactive development with editor integration
 
 ## Documentation
