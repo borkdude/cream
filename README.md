@@ -133,8 +133,8 @@ filesystem).
 
 - Running `.java` files needs a JDK on the system for `javac`. Clojure code
   does not
-- Loading a class from `lib/modules` needs `JAVA_HOME`. Without it Crema prints
-  a warning to stdout and continues
+- Loading a class from `lib/modules` needs `JAVA_HOME`. Without it the class
+  is not found
 - Requires a lightly patched Clojure fork (minor workarounds for Crema
   quirks in `RT.java` and `Var.java`,
   [details](doc/technical.md#fork-changes))
