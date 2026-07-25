@@ -120,13 +120,21 @@ skip compilation and dependency resolution.
 
 ## Requirements
 
-Some Java interop may require `JAVA_HOME` pointing to a JDK installation, as
-Crema loads certain classes at runtime from the JDK's `lib/modules` (JRT
-filesystem). Pure Clojure code works without `JAVA_HOME`.
+Clojure code runs from the binary alone, with no JDK on the system. This
+covers Java interop and every library in [Tested libraries](#tested-libraries),
+including HTTPS.
+
+Running `.java` files requires `JAVA_HOME` pointing to a JDK, since cream
+shells out to `javac`. A JDK is also needed for classes that are neither in the
+image nor on the classpath, which Crema loads from `lib/modules` (JRT
+filesystem).
 
 ## Known limitations
 
-- May need `JAVA_HOME` for Java interop (some JDK classes are loaded at runtime; pure Clojure works without it)
+- Running `.java` files needs a JDK on the system for `javac`. Clojure code
+  does not
+- Loading a class from `lib/modules` needs `JAVA_HOME`. Without it Crema prints
+  a warning to stdout and continues
 - Requires a lightly patched Clojure fork (minor workarounds for Crema
   quirks in `RT.java` and `Var.java`,
   [details](doc/technical.md#fork-changes))
@@ -148,7 +156,7 @@ workarounds.
 | Java interop | Full (runtime class loading) | Limited to compiled-in classes |
 | Startup | ~7ms | ~10ms |
 | Binary size | ~200MiB | ~68MiB |
-| Standalone | Mostly (may need `JAVA_HOME` for Java interop) | Yes |
+| Standalone | Yes for Clojure, JDK needed to run `.java` files | Yes |
 | Loop 10M iterations* | ~21ms | ~173ms |
 | Compile time (GitHub Actions, linux-amd64) | ~10min | ~3min |
 | Maturity | Experimental | Production-ready |
@@ -250,8 +258,8 @@ Requires a GraalVM EA build with RuntimeClassLoading support.
 
 ## Future work
 
-- Fully standalone binary: investigate whether JRT metadata can be bundled
-  in the binary to eliminate the `JAVA_HOME` requirement for Java interop
+- Bundle JRT metadata in the binary so classes from `lib/modules` resolve
+  without a JDK
 - Reduce binary size: currently ~200MiB due to preserved packages, the
   Crema interpreter and the Ristretto JIT
 - nREPL support: enable interactive development with editor integration
