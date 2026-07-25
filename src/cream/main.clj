@@ -132,6 +132,27 @@
       (.invoke main-method nil
         (into-array Object [(into-array String (vec args))])))))
 
+(defn- jimage-available?
+  "True when a JDK jimage is reachable, so Crema can load boot classes."
+  []
+  (boolean (when-let [home (or (System/getenv "JAVA_HOME")
+                               (System/getProperty "java.home"))]
+             (fs/exists? (fs/path home "lib" "modules")))))
+
+(defn- prime-boot-class-registry!
+  "Crema prints a warning on stdout the first time it consults the boot class
+  loader without a jimage. Trigger that lookup here with stdout swallowed, so
+  it does not land in the middle of program output."
+  []
+  (let [out System/out]
+    (try
+      (System/setOut (java.io.PrintStream. (java.io.OutputStream/nullOutputStream)))
+      ;; The name must sit in a package of a boot module, otherwise the lookup
+      ;; returns before Crema touches the jimage.
+      (Class/forName "java.lang.CreamPrimeBootClassRegistry" false nil)
+      (catch Throwable _)
+      (finally (System/setOut out)))))
+
 (defn -main [& args]
   ;; EA28 / Crema runtime-inits jdk.internal.jimage.ImageReaderFactory.
   ;; Its <clinit> reads java.home, which is null in the native binary,
@@ -140,6 +161,8 @@
   ;; through Target_jdk_internal_jrtfs_SystemImage.findHome.
   (when (nil? (System/getProperty "java.home"))
     (System/setProperty "java.home" "/"))
+  (when-not (jimage-available?)
+    (prime-boot-class-registry!))
   ;; On Windows, *out* captured at build time has the wrong encoding.
   ;; https://github.com/babashka/babashka/issues/1009
   ;; https://github.com/oracle/graal/issues/12249
