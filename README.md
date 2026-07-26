@@ -169,7 +169,7 @@ Resolving `deps.edn` or `-Sdeps` dependencies needs `java` on the `PATH` or
   quirks in `RT.java` and `Var.java`,
   [details](doc/technical.md#fork-changes))
 - Java enum support fixed in GraalVM ea17 ([oracle/graal#13034](https://github.com/oracle/graal/issues/13034))
-- Large binary (~200MiB, includes Crema interpreter, Ristretto JIT and
+- Large binary (~208MiB, includes Crema interpreter, Ristretto JIT and
   preserved packages)
 - Crema is EA (GraalVM's RuntimeClassLoading is experimental and only
   available in [EA builds](https://github.com/graalvm/oracle-graalvm-ea-builds))
@@ -185,7 +185,7 @@ workarounds.
 | Library loading | Any library from JARs at runtime | Any library (with built-in classes, SCI/deftype limitations) |
 | Java interop | Full (runtime class loading) | Limited to compiled-in classes |
 | Startup | ~7ms | ~10ms |
-| Binary size | ~200MiB | ~68MiB |
+| Binary size | ~208MiB | ~68MiB |
 | Standalone | Yes for Clojure, JDK needed to run `.java` files | Yes |
 | Loop 10M iterations* | ~21ms | ~173ms |
 | Compile time (GitHub Actions, linux-amd64) | ~10min | ~3min |
@@ -290,7 +290,7 @@ Requires a GraalVM EA build with RuntimeClassLoading support.
 
 - Bundle JRT metadata in the binary so classes from `lib/modules` resolve
   without a JDK
-- Reduce binary size: currently ~200MiB due to preserved packages, the
+- Reduce binary size: currently ~208MiB due to preserved packages, the
   Crema interpreter and the Ristretto JIT
 - nREPL support: enable interactive development with editor integration
 
