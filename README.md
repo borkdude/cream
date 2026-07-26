@@ -51,13 +51,40 @@ $ ./cream -M -e '(do (definterface IGreet (greet [name]))
 
 ## Loading libraries at runtime
 
-Use `-Scp` to add JARs to the classpath:
+Use `-Sdeps` to add dependencies:
 
 ```sh
-./cream -Scp "$(clojure -Spath -Sdeps '{:deps {org.clojure/data.json {:mvn/version "RELEASE"}}}')" \
+./cream -Sdeps '{:deps {org.clojure/data.json {:mvn/version "RELEASE"}}}' \
   -M -e '(do (require (quote [clojure.data.json :as json])) (json/write-str {:a 1}))'
 ;; => "{\"a\":1}"
 ```
+
+A `deps.edn` in the current directory is picked up automatically:
+
+```sh
+$ cat deps.edn
+{:paths ["src"] :deps {dev.weavejester/medley {:mvn/version "1.9.0"}}}
+$ ./cream -M -m my.app
+```
+
+Use `-M:alias` to add `:extra-deps`, `:extra-paths` and `:main-opts` from an
+alias. `-A`, `-X` and `-T` work as in the Clojure CLI:
+
+```sh
+./cream -M:test
+```
+
+Use `-Scp` to pass a classpath directly. Nothing is resolved and `deps.edn` is
+ignored:
+
+```sh
+./cream -Scp "$(clojure -Spath)" -M -m my.app
+```
+
+Dependencies are resolved with [deps.clj](https://github.com/borkdude/deps.clj),
+which is built into the binary. Resolving needs `java` on the `PATH` or
+`JAVA_HOME` set, reading the cached classpath from `.cpcache` does not. The
+first resolution downloads the Clojure tools jar to `~/.deps.clj`.
 
 ## Running Java files
 
@@ -128,6 +155,9 @@ Running `.java` files requires `JAVA_HOME` pointing to a JDK, since cream
 shells out to `javac`. A JDK is also needed for classes that are neither in the
 image nor on the classpath, which Crema loads from `lib/modules` (JRT
 filesystem).
+
+Resolving `deps.edn` or `-Sdeps` dependencies needs `java` on the `PATH` or
+`JAVA_HOME` set. A cached classpath is read without either.
 
 ## Known limitations
 

@@ -14,6 +14,10 @@
             [clojure.pprint]
             [clojure.reflect]
             [clojure.repl]
+            ;; clojure.main/repl-requires loads this at REPL startup. Without it
+            ;; in the image it comes from a Clojure jar on the classpath, whose
+            ;; direct-linked AOT classes crash Crema.
+            [clojure.repl.deps]
             [clojure.set]
             [clojure.spec.alpha]
             [clojure.stacktrace]
@@ -30,18 +34,109 @@
 
 (set! *warn-on-reflection* true)
 
+(def ^:private path-sep (System/getProperty "path.separator"))
 
 (defn- parse-args
-  "Parse -Scp <paths> from args. Returns [cp-string remaining-args]."
+  "Parse -Scp <paths> and -Sdeps <edn> from args. Returns
+  [{:cp cp-string :deps deps-edn-string} remaining-args]."
   [args]
   (loop [args args
-         cp nil]
-    (if (seq args)
-      (let [[flag & rest-args] args]
-        (if (= "-Scp" flag)
-          (recur (rest rest-args) (first rest-args))
-          [cp args]))
-      [cp args])))
+         opts {}]
+    (let [[flag & rest-args] args]
+      (case flag
+        "-Scp" (recur (rest rest-args) (assoc opts :cp (first rest-args)))
+        "-Sdeps" (recur (rest rest-args) (assoc opts :deps (first rest-args)))
+        [opts args]))))
+
+(defn- set-classpath!
+  "Installs a JarClassLoader for cp-str as the context classloader."
+  [^String cp-str]
+  (let [paths (.split cp-str path-sep)
+        cl (JarClassLoader. paths (.getContextClassLoader (Thread/currentThread)))]
+    (.setContextClassLoader (Thread/currentThread) cl)
+    ;; Re-scan data_readers.clj(c) now that library JARs are on the
+    ;; classpath — Clojure's RT scanned at init time before our
+    ;; JarClassLoader existed.
+    (#'clojure.core/load-data-readers)))
+
+(defn- java-cmd
+  "Path to a java executable, or nil when there is none."
+  []
+  (or (System/getenv "JAVA_CMD")
+      (fs/which "java")
+      (when-let [home (System/getenv "JAVA_HOME")]
+        (let [java (fs/path home "bin" "java")]
+          (when (fs/executable? java) java)))))
+
+(defn- run-deps
+  "Runs deps.clj with args. Computing a classpath needs java, reading a
+  cached one does not, so without java deps.clj gets a placeholder command
+  and fails with an explanation only when it has to resolve."
+  [args]
+  (if (java-cmd)
+    (apply deps/-main args)
+    (binding [deps/*getenv-fn* (fn [env]
+                                 (if (= "JAVA_CMD" env)
+                                   "java"
+                                   (System/getenv env)))
+              deps/*aux-process-fn*
+              (fn [_]
+                (binding [*out* *err*]
+                  (println (str "Resolving dependencies needs a JVM, but no java was found "
+                                "on the PATH or under JAVA_HOME.")))
+                (System/exit 1))]
+      (apply deps/-main args))))
+
+(defn- deps-classpath
+  "Computes a classpath from deps.edn, with deps-edn-string (-Sdeps) merged
+  on top of it."
+  [deps-edn-string]
+  (let [cp (clojure.string/trim
+             (with-out-str
+               (run-deps (cond-> []
+                           deps-edn-string (conj "-Sdeps" deps-edn-string)
+                           true (conj "-Spath")))))]
+    (when-not (clojure.string/blank? cp)
+      cp)))
+
+(defn- cli-flag?
+  "True for args that deps.clj handles: alias modes, JVM options and the
+  -S options cream does not parse itself. Bare -M is cream's own and skips
+  deps.clj."
+  [flag]
+  (boolean
+    (when flag
+      (or (some #(clojure.string/starts-with? flag %) ["-M:" "-A" "-X" "-T" "-J" "-S"])
+          (= "-P" flag)))))
+
+(defn- classpath-arg
+  "deps.clj writes an over-long classpath to a file and passes @the-file."
+  [^String cp]
+  (if (clojure.string/starts-with? cp "@")
+    (clojure.edn/read-string (slurp (subs cp 1)))
+    cp))
+
+(defn- run-cli
+  "Delegates to deps.clj, then runs the clojure.main invocation it produced
+  in this process instead of spawning a JVM."
+  [args]
+  (binding [deps/*clojure-process-fn*
+            (fn [{:keys [cmd]}]
+              (let [cmd (vec cmd)
+                    cp-idx (.indexOf ^java.util.List cmd "-classpath")
+                    main-idx (.indexOf ^java.util.List cmd "clojure.main")]
+                ;; Options before -classpath target the JVM cream does not start.
+                (doseq [opt (subvec cmd 1 cp-idx)]
+                  (if (clojure.string/starts-with? opt "-D")
+                    (let [[k v] (clojure.string/split (subs opt 2) #"=" 2)]
+                      (System/setProperty k (or v "")))
+                    (when-not (= "-XX:-OmitStackTraceInFastThrow" opt)
+                      (binding [*out* *err*]
+                        (println "Ignoring JVM option:" opt)))))
+                (set-classpath! (classpath-arg (nth cmd (inc cp-idx))))
+                (apply clojure.main/main (subvec cmd (inc main-idx)))
+                {:exit 0}))]
+    (run-deps args)))
 
 (defn- parse-deps
   "Parse //DEPS lines from a Java source file. Returns a seq of
@@ -86,8 +181,7 @@
                             [sym {:mvn/version v}])))
                    deps)
         deps-edn (pr-str {:deps deps-map})]
-    (clojure.string/trim
-      (with-out-str (deps/-main "-Sdeps" deps-edn "-Spath")))))
+    (deps-classpath deps-edn)))
 
 (defn- run-java [^String java-file args cp-str]
   (let [source (fs/file java-file)
@@ -168,24 +262,20 @@
   ;; https://github.com/oracle/graal/issues/12249
   (when (.contains (System/getProperty "os.name") "Windows")
     (alter-var-root #'*out* (constantly (java.io.OutputStreamWriter. System/out))))
-  (let [[cp-str remaining] (parse-args args)
-        _ (when cp-str
-            (let [paths (.split ^String cp-str (System/getProperty "path.separator"))
-                  cl (JarClassLoader. paths (.getContextClassLoader (Thread/currentThread)))]
-              (.setContextClassLoader (Thread/currentThread) cl)
-              ;; Re-scan data_readers.clj(c) now that library JARs are on
-              ;; the classpath — Clojure's RT scanned at init time before
-              ;; our JarClassLoader existed.
-              (#'clojure.core/load-data-readers)))
+  (let [[opts remaining] (parse-args args)
         [flag & main-args] remaining]
-    (cond
-      (= "-M" flag)
-      (apply clojure.main/main main-args)
-
-      (and flag (.endsWith ^String flag ".java"))
-      (do (run-java flag main-args cp-str)
-          (shutdown-agents))
-
-      :else
-      (do (apply clojure.main/main args)
-          (shutdown-agents)))))
+    (if (cli-flag? flag)
+      (run-cli args)
+      ;; -Scp means: use this classpath, do not compute one.
+      (let [cp-str (or (:cp opts)
+                       (when (or (:deps opts) (fs/exists? "deps.edn"))
+                         (deps-classpath (:deps opts))))]
+        (if (and flag (.endsWith ^String flag ".java"))
+          (do (run-java flag main-args cp-str)
+              (shutdown-agents))
+          (do (when cp-str
+                (set-classpath! cp-str))
+              (if (= "-M" flag)
+                (apply clojure.main/main main-args)
+                (do (apply clojure.main/main remaining)
+                    (shutdown-agents)))))))))

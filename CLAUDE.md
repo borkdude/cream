@@ -34,7 +34,7 @@ bb run-lib-tests medley/medley
 
 ## Architecture
 
-- **`src/cream/main.clj`** — Entry point. Handles CLI arg parsing (`-Scp`, `-M`, `.java` files), sets up `JarClassLoader` for runtime classpath, delegates to `clojure.main` for Clojure execution, and compiles/caches/runs Java source files with `//DEPS` support.
+- **`src/cream/main.clj`** — Entry point. Handles CLI arg parsing (`-Scp`, `-Sdeps`, `-M`, `.java` files), sets up `JarClassLoader` for runtime classpath, delegates to `clojure.main` for Clojure execution, and compiles/caches/runs Java source files with `//DEPS` support. A `deps.edn` in the current directory is resolved via deps.clj. Clojure CLI options that cream does not parse itself (`-M:alias`, `-A`, `-X`, `-T`, `-J`, other `-S*`) go to `deps.clj/-main` with `*clojure-process-fn*` rebound, so the `clojure.main` invocation it computes runs in-process instead of spawning a JVM.
 - **`src-java/cream/JarClassLoader.java`** — Custom classloader extending `DynamicClassLoader` that reads JARs and directories directly (workaround for `URLClassLoader.findResource()` not working in Crema native images).
 - **`src-java/ClojureFeature.java`** — GraalVM Feature that forces sequential Clojure core initialization in `beforeAnalysis()` to prevent circular class init deadlocks.
 - **`src-java/Target_jdk_internal_misc_VM.java`** — GraalVM substitutions for JDK internals (VM.initialize no-op, JRT filesystem home resolution).
@@ -51,6 +51,7 @@ bb run-lib-tests medley/medley
 - Java lambdas across classloader boundaries — fixed in ea20 by [GH-13190](https://github.com/oracle/graal/pull/13190). Lambda repro at `repro/lambda/` now prints `HELLO`. nextjournal.markdown (wrapping commonmark-java) works and is in the lib test suite.
 - http-kit: fully works (server + client including HTTPS) after adding preserves for `java.net`, `javax.net.ssl`, `java.nio`, `java.nio.channels`, `java.nio.channels.spi`, and `java.util.concurrent.atomic`.
 - `Preserve=package=java.lang` was added in ea20 to fix `StringConcat` generated classes crashing with "Method not compiled". Without it, any runtime-loaded Java code using string concatenation (`+` on strings, which compiles to `invokedynamic makeConcatWithConstants`) would segfault. This fixed both clj-yaml and commonmark-java's inline parsing.
+- AOT classes compiled with direct linking crash when loaded from a jar at runtime: they call `invokeStatic` on image methods that analysis never saw as reachable, giving `Fatal error: Unable to call AOT method`. The Clojure jar on the classpath hit this via `clojure.repl.deps`, the only `clojure.main/repl-requires` entry not in the image, so it is required by `cream.main` now. The ClojureTools jar hits it too, which is why in-process dependency resolution is not an option
 - Some tests are skipped per-library due to Crema limitations (see `skip-tests` and `skip-namespaces` in `bb/run_lib_tests.clj`)
 - The binary is ~200MiB due to preserved packages, the Crema interpreter, and the Ristretto JIT (~171MiB without `-H:+GraalJITCompileAtRuntime`)
 - `-H:+GraalJITCompileAtRuntime` enables Ristretto, the JIT for runtime-loaded bytecode. Without it everything runs interpreted: a 10M-iteration `loop`/`recur` takes ~1275ms interpreted vs ~38ms JIT-compiled. Requires `-H:+RuntimeClassLoading`; conflicts with `SupportCompileInIsolates`. Startup stays ~10ms.
