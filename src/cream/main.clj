@@ -183,6 +183,36 @@
         deps-edn (pr-str {:deps deps-map})]
     (deps-classpath deps-edn)))
 
+(defn- compile-in-process
+  "Compiles source to out-dir with the compiler in the image. Returns false
+  when there is no such compiler, so the caller can fall back to javac."
+  [^String source ^String out-dir cp-str]
+  (try
+    (when-let [^javax.tools.JavaCompiler compiler (javax.tools.ToolProvider/getSystemJavaCompiler)]
+      (let [diagnostics (javax.tools.DiagnosticCollector.)
+            ^javax.tools.StandardJavaFileManager fm
+            (.getStandardFileManager compiler diagnostics nil nil)
+            units (.getJavaFileObjects fm (into-array String [source]))
+            opts (cond-> ["-d" out-dir]
+                   cp-str (into ["-cp" cp-str]))
+            ok (.call (.getTask compiler nil fm diagnostics opts nil units))]
+        (doseq [d (.getDiagnostics diagnostics)]
+          (binding [*out* *err*] (println (str d))))
+        (boolean ok)))
+    (catch NoClassDefFoundError _ false)))
+
+(defn- compile-java!
+  "Compiles source to out-dir, in this process when possible."
+  [source out-dir cp-str]
+  (when-not (compile-in-process (str (fs/absolutize source)) out-dir cp-str)
+    (let [javac (str (fs/path (or (System/getenv "JAVA_HOME")
+                                  (System/getProperty "java.home"))
+                              "bin" "javac"))
+          cmd (cond-> [javac "-d" out-dir]
+                cp-str (into ["-cp" cp-str])
+                true (conj (str (fs/absolutize source))))]
+      @(process/process cmd {:inherit true}))))
+
 (defn- run-java [^String java-file args cp-str]
   (let [source (fs/file java-file)
         class-name (fs/strip-ext (fs/file-name source))
@@ -206,13 +236,7 @@
       (fs/create-dirs out-dir)
       (when deps-cp
         (spit (str cp-file) deps-cp))
-      (let [javac (str (fs/path (or (System/getenv "JAVA_HOME")
-                                    (System/getProperty "java.home"))
-                                "bin" "javac"))
-            cmd (cond-> [javac "-d" out-dir]
-                  cp-str (into ["-cp" cp-str])
-                  true (conj (str (fs/absolutize source))))]
-        @(process/process cmd {:inherit true})))
+      (compile-java! source out-dir cp-str))
     ;; Add output dir + deps to classloader
     (let [cp-paths (cond-> [out-dir]
                      cp-str (into (.split ^String cp-str sep)))

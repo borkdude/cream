@@ -11,10 +11,10 @@
                        (if (fs/windows?) "native-image.cmd" "native-image")))
          "-jar" "target/cream-1.0.0-standalone.jar"
          "-O1"
-         "--initialize-at-run-time=com.sun.tools.javac.file.Locations,jdk.internal.jrtfs.SystemImage"
-         "--initialize-at-build-time=clojure,cream,org.xml.sax,com.sun.tools.doclint,com.sun.tools.javac.parser.Tokens$TokenKind,com.sun.tools.javac.parser.Tokens$Token$Tag"
+         "--initialize-at-run-time=com.sun.tools.javac.file.Locations,jdk.internal.jrtfs.SystemImage,jdk.internal.org.jline.terminal.impl.ffm.CLibrary"
+         "--initialize-at-build-time=clojure,cream,org.xml.sax,com.sun.tools.doclint,com.sun.tools.javac.parser.Tokens$TokenKind,com.sun.tools.javac.parser.Tokens$Token$Tag,com.sun.tools.javac.api.JavacTool"
          "--features=ClojureFeature,clj_easy.graal_build_time.InitClojureClasses"
-         "--add-modules=java.xml,java.logging"
+         "--add-modules=java.xml,java.logging,java.compiler,jdk.compiler"
          "-H:+UnlockExperimentalVMOptions"
          "-H:Name=cream"
          "-H:+RuntimeClassLoading"
@@ -50,6 +50,8 @@
          "-H:Preserve=package=java.nio.channels.spi"
          "-H:Preserve=module=java.logging"
          "-H:Preserve=module=java.sql"
+         "-H:Preserve=module=java.compiler"
+         "-H:Preserve=module=jdk.compiler"
          (str "-Djava.home=" (System/getenv "GRAALVM_HOME"))
          "-J-Djava.file.encoding=UTF-8"
          "-Djava.file.encoding=UTF-8"
