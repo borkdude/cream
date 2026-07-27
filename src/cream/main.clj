@@ -87,11 +87,40 @@
                 (System/exit 1))]
       (apply deps/-main args))))
 
-(defn- deps-classpath
-  "Computes a classpath from deps.edn, with deps-edn-string (-Sdeps) merged
-  on top of it."
+(def ^:private pom-dep
+  {'cream/pom-project {:local/root "." :deps/manifest :pom}})
+
+(defn- pom-project?
+  "True when there is a pom.xml to take dependencies from and no deps.edn."
+  []
+  (and (fs/exists? "pom.xml") (not (fs/exists? "deps.edn"))))
+
+(defn- merge-pom-dep
+  "Adds pom.xml as a dependency to a -Sdeps map, so tools.deps reads the
+  dependencies and source paths out of it."
   [deps-edn-string]
-  (let [cp (clojure.string/trim
+  (pr-str (update (if deps-edn-string
+                    (clojure.edn/read-string deps-edn-string)
+                    {})
+                  :deps merge pom-dep)))
+
+(defn- pom-args
+  "Adds the pom.xml dependency to the -Sdeps argument of a deps.clj call."
+  [args]
+  (let [args (vec args)
+        i (.indexOf ^java.util.List args "-Sdeps")]
+    (if (neg? i)
+      (into ["-Sdeps" (merge-pom-dep nil)] args)
+      (assoc args (inc i) (merge-pom-dep (get args (inc i)))))))
+
+(defn- deps-classpath
+  "Computes a classpath from deps.edn, or from pom.xml when that is the only
+  project file, with deps-edn-string (-Sdeps) merged on top of it."
+  [deps-edn-string]
+  (let [deps-edn-string (if (pom-project?)
+                          (merge-pom-dep deps-edn-string)
+                          deps-edn-string)
+        cp (clojure.string/trim
              (with-out-str
                (run-deps (cond-> []
                            deps-edn-string (conj "-Sdeps" deps-edn-string)
@@ -136,7 +165,7 @@
                 (set-classpath! (classpath-arg (nth cmd (inc cp-idx))))
                 (apply clojure.main/main (subvec cmd (inc main-idx)))
                 {:exit 0}))]
-    (run-deps args)))
+    (run-deps (if (pom-project?) (pom-args args) args))))
 
 (defn- parse-deps
   "Parse //DEPS lines from a Java source file. Returns a seq of
@@ -183,16 +212,24 @@
         deps-edn (pr-str {:deps deps-map})]
     (deps-classpath deps-edn)))
 
+(defn- java-package
+  "The package a Java source file declares, if any."
+  [^String source-content]
+  (second (re-find #"(?m)^\s*package\s+([\w.$]+)\s*;" source-content)))
+
 (defn- run-java [^String java-file args cp-str]
   (let [source (fs/file java-file)
-        class-name (fs/strip-ext (fs/file-name source))
-        deps (parse-deps java-file)
         source-content (slurp java-file)
+        package (java-package source-content)
+        class-name (cond->> (fs/strip-ext (fs/file-name source))
+                     package (str package "."))
+        class-file (str (clojure.string/replace class-name "." "/") ".class")
+        deps (parse-deps java-file)
         hash (sha256-hex source-content)
         cache-base (fs/path (cache-dir) hash)
         out-dir (str (fs/path cache-base "classes"))
         cp-file (fs/path cache-base "classpath")
-        cached? (fs/exists? (fs/path out-dir (str class-name ".class")))
+        cached? (fs/exists? (fs/path out-dir class-file))
         sep (System/getProperty "path.separator")
         deps-cp (if (and cached? (fs/exists? cp-file))
                   (let [cp (clojure.string/trim (slurp (str cp-file)))]
@@ -268,7 +305,9 @@
       (run-cli args)
       ;; -Scp means: use this classpath, do not compute one.
       (let [cp-str (or (:cp opts)
-                       (when (or (:deps opts) (fs/exists? "deps.edn"))
+                       (when (or (:deps opts)
+                                 (fs/exists? "deps.edn")
+                                 (fs/exists? "pom.xml"))
                          (deps-classpath (:deps opts))))]
         (if (and flag (.endsWith ^String flag ".java"))
           (do (run-java flag main-args cp-str)

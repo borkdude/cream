@@ -67,6 +67,14 @@ $ cat deps.edn
 $ ./cream -M -m my.app
 ```
 
+A `pom.xml` is picked up the same way when there is no `deps.edn`, so a Maven
+project needs no extra configuration. See
+[examples/java-pom](examples/java-pom):
+
+```sh
+./cream src/main/java/com/example/Hello.java
+```
+
 Use `-M:alias` to add `:extra-deps`, `:extra-paths` and `:main-opts` from an
 alias. `-A`, `-X` and `-T` work as in the Clojure CLI:
 
@@ -110,6 +118,9 @@ $ ./cream /tmp/Hello.java world
 Hello from Java!
 Args: world
 ```
+
+A `package` declaration is honored, so files in a Maven source tree run as they
+are.
 
 ### Dependencies
 
