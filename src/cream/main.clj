@@ -217,6 +217,30 @@
   [^String source-content]
   (second (re-find #"(?m)^\s*package\s+([\w.$]+)\s*;" source-content)))
 
+(defn- source-root
+  "The directory javac should search for the other sources of a project: the
+  file's own directory, with the package directories stripped off."
+  [source package]
+  (let [dir (fs/parent (fs/absolutize source))]
+    (if package
+      (reduce (fn [d _] (fs/parent d))
+              dir
+              (clojure.string/split package #"\."))
+      dir)))
+
+(defn- classes-current?
+  "True when every compiled class is at least as new as the source it came
+  from. javac also compiles the sources a file references, and those are not
+  part of the cache key, so they are checked here."
+  [out-dir root]
+  (every? (fn [class-file]
+            (let [rel (str (fs/relativize out-dir class-file))
+                  src (fs/path root (clojure.string/replace rel #"(\$.*)?\.class$" ".java"))]
+              (or (not (fs/exists? src))
+                  (not (pos? (compare (fs/last-modified-time src)
+                                      (fs/last-modified-time class-file)))))))
+          (fs/glob out-dir "**.class")))
+
 (defn- run-java [^String java-file args cp-str]
   (let [source (fs/file java-file)
         source-content (slurp java-file)
@@ -229,7 +253,9 @@
         cache-base (fs/path (cache-dir) hash)
         out-dir (str (fs/path cache-base "classes"))
         cp-file (fs/path cache-base "classpath")
-        cached? (fs/exists? (fs/path out-dir class-file))
+        root (source-root source package)
+        cached? (and (fs/exists? (fs/path out-dir class-file))
+                     (classes-current? out-dir root))
         sep (System/getProperty "path.separator")
         deps-cp (if (and cached? (fs/exists? cp-file))
                   (let [cp (clojure.string/trim (slurp (str cp-file)))]
@@ -246,7 +272,7 @@
       (let [javac (str (fs/path (or (System/getenv "JAVA_HOME")
                                     (System/getProperty "java.home"))
                                 "bin" "javac"))
-            cmd (cond-> [javac "-d" out-dir]
+            cmd (cond-> [javac "-d" out-dir "-sourcepath" (str root)]
                   cp-str (into ["-cp" cp-str])
                   true (conj (str (fs/absolutize source))))]
         @(process/process cmd {:inherit true})))
