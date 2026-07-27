@@ -1,7 +1,23 @@
 # Maven project
 
 A `pom.xml` in the current directory is picked up automatically. Its
-dependencies and source paths go on the classpath, no `deps.edn` needed:
+dependencies and source paths go on the classpath, no `deps.edn` needed.
+
+`src/main/java/com/example/Hello.java` uses `commons-codec`, declared in the
+pom:
+
+```java
+package com.example;
+
+import org.apache.commons.codec.digest.DigestUtils;
+
+public class Hello {
+    public static void main(String[] args) {
+        String input = args.length > 0 ? args[0] : "hello world";
+        System.out.println(input + " -> " + DigestUtils.sha256Hex(input));
+    }
+}
+```
 
 ```sh
 $ cream src/main/java/com/example/Hello.java
