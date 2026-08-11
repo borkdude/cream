@@ -22,6 +22,8 @@
          "-H:+GraalJITCompileAtRuntime"
          "-H:ConfigurationFileDirectories=."
          "-H:IncludeResources=clojure/.*"
+         ;; JNA's native dispatch library — must be embedded so it can be extracted at runtime.
+         "-H:IncludeResources=com/sun/jna/.*"
          ;; Minimal Preserve set — verified by bb/test_preserve.clj
          "-H:Preserve=package=java.io"
          "-H:Preserve=package=java.lang"
@@ -50,6 +52,15 @@
          "-H:Preserve=package=java.nio.channels.spi"
          "-H:Preserve=module=java.logging"
          "-H:Preserve=module=java.sql"
+         ;; jdk.unsupported: sun.misc.Unsafe static fields (ARRAY_*_BASE_OFFSET) needed
+         ;; by dtype-next / libpython-clj. In JDK 9+, sun.misc lives in jdk.unsupported.
+         "-H:Preserve=module=jdk.unsupported"
+         ;; Panama FFI method table (Arena, SymbolLookup, ValueLayout, etc.) needed by
+         ;; dtype-next's :jdk-21 FFI backend, which libpython-clj uses to call libpython.
+         "-H:Preserve=package=java.lang.foreign"
+         ;; java.lang.annotation.RetentionPolicy/RUNTIME used by insn (dtype-ffi's
+         ;; bytecode generator) when building the Panama FFI bridge at runtime.
+         "-H:Preserve=package=java.lang.annotation"
          (str "-Djava.home=" (System/getenv "GRAALVM_HOME"))
          "-J-Djava.file.encoding=UTF-8"
          "-Djava.file.encoding=UTF-8"

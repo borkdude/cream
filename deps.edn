@@ -4,7 +4,11 @@
         babashka/fs {:mvn/version "0.5.26"}
         babashka/process {:mvn/version "0.5.22"}
         borkdude/deps.clj {:mvn/version "1.12.4.1597"}
-        com.github.clj-easy/graal-build-time {:mvn/version "1.0.5"}}
+        com.github.clj-easy/graal-build-time {:mvn/version "1.0.5"}
+        ;; JNA must be bundled in the cream native image so GraalVM's JNI layer
+        ;; can resolve com.sun.jna.* classes (Crema-loaded classpath classes are
+        ;; invisible to JNI C code; AOT-compiled classes are not).
+        net.java.dev.jna/jna {:mvn/version "5.14.0"}}
  :aliases {:build {:deps {io.github.clojure/tools.build {:git/tag "v0.10.10"
                                                          :git/sha "deedd62"}
                           slipset/deps-deploy {:mvn/version "0.2.2"}}
