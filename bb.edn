@@ -3,6 +3,8 @@
                 :task (shell "bb" "bb/build_native.clj")}
   gen-reflect  {:doc "Generate reflect-config.json"
                 :task (shell "bb" "bb/gen_reflect_config.clj")}
+  gen-ffm-shapes {:doc "Regenerate reachability-metadata.json's foreign.downcalls/upcalls from reachability-metadata.base.json"
+                  :task (shell "bb" "bb/gen_ffm_shapes.clj")}
   uber         {:doc "Build uberjar only"
                 :task (clojure "-T:build" "uber")}
   clean        {:doc "Clean target directory"

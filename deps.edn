@@ -4,7 +4,15 @@
         babashka/fs {:mvn/version "0.5.26"}
         babashka/process {:mvn/version "0.5.22"}
         borkdude/deps.clj {:mvn/version "1.12.4.1597"}
-        com.github.clj-easy/graal-build-time {:mvn/version "1.0.5"}}
+        com.github.clj-easy/graal-build-time {:mvn/version "1.0.5"}
+        ;; JNA is bundled so its classes are AOT-reachable and dtype-next's :jna
+        ;; FFI backend can be selected without a ClassNotFoundException. Note:
+        ;; actual JNI native-method linkage for JNA still fails today under
+        ;; -H:+RuntimeClassLoading (a GraalVM/Crema classloader-scoping bug --
+        ;; see known-issues.md). Callers should try :jna first and fall back to
+        ;; :jdk-21 (Panama) on failure; the fallback becomes unnecessary the
+        ;; day that upstream bug is fixed, with no code changes required here.
+        net.java.dev.jna/jna {:mvn/version "5.14.0"}}
  :aliases {:build {:deps {io.github.clojure/tools.build {:git/tag "v0.10.10"
                                                          :git/sha "deedd62"}
                           slipset/deps-deploy {:mvn/version "0.2.2"}}
