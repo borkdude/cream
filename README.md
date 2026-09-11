@@ -21,6 +21,9 @@ Download from the [latest dev release](https://github.com/borkdude/cream/release
 curl -sL https://github.com/borkdude/cream/releases/download/dev/cream-macos-aarch64.tar.gz | tar xz
 # Linux (x86_64)
 curl -sL https://github.com/borkdude/cream/releases/download/dev/cream-linux-amd64.tar.gz | tar xz
+# Linux (ARM64)
+curl -sL https://github.com/borkdude/cream/releases/download/dev/cream-linux-aarch64.tar.gz | tar xz
+
 # Windows (PowerShell)
 # Invoke-WebRequest -Uri https://github.com/borkdude/cream/releases/download/dev/cream-windows-amd64.zip -OutFile cream.zip
 # Expand-Archive cream.zip -DestinationPath .
