@@ -180,7 +180,7 @@ Resolving `deps.edn` or `-Sdeps` dependencies needs `java` on the `PATH` or
   quirks in `RT.java` and `Var.java`,
   [details](doc/technical.md#fork-changes))
 - Java enum support fixed in GraalVM ea17 ([oracle/graal#13034](https://github.com/oracle/graal/issues/13034))
-- Large binary (~208MiB, includes Crema interpreter, Ristretto JIT and
+- Large binary (~224MB, includes Crema interpreter, Ristretto JIT and
   preserved packages)
 - Crema is EA (GraalVM's RuntimeClassLoading is experimental and only
   available in [EA builds](https://github.com/graalvm/oracle-graalvm-ea-builds))
@@ -195,14 +195,21 @@ workarounds.
 | Clojure | Full JVM Clojure (1.13 fork) | SCI interpreter (subset) |
 | Library loading | Any library from JARs at runtime | Any library (with built-in classes, SCI/deftype limitations) |
 | Java interop | Full (runtime class loading) | Limited to compiled-in classes |
-| Startup | ~7ms | ~10ms |
-| Binary size | ~208MiB | ~68MiB |
-| Standalone | Yes for Clojure, JDK needed to run `.java` files | Yes |
+| Startup | ~10ms | ~10ms |
+| Loading malli** | ~1300ms | ~60ms |
 | Loop 10M iterations* | ~21ms | ~173ms |
+| Binary size | ~224MB | ~75MB |
+| Built-in libraries | Clojure standard library | http-kit, cheshire, clj-yaml, data.csv, transit, selmer and more |
+| Tooling | | Tasks, nREPL, pods |
+| Dependency resolution | Needs `java` | In-process, no JDK |
+| Standalone | Yes for Clojure, JDK needed to run `.java` files | Yes |
+| GraalVM | EA build and a Clojure fork | Release build |
 | Compile time (GitHub Actions, linux-amd64) | ~10min | ~3min |
 | Maturity | Experimental | Production-ready |
 
 \* `(time (loop [i 0] (when (< i 10000000) (recur (inc i)))))`
+
+\** `(time (require 'malli.core 'malli.generator))` with malli 0.16.4
 
 Java interop is faster in cream since it calls methods directly rather than
 through SCI's reflection layer:
@@ -216,9 +223,11 @@ $ bb -e '(time (let [sb (StringBuilder.)] (dotimes [i 100000] (.append sb (str i
 "Elapsed time: 65.012708 msecs"
 ```
 
-Babashka still loads pure Clojure code faster. Cream runs it faster once
-loaded, since `-H:+GraalJITCompileAtRuntime` compiles runtime-loaded bytecode
-instead of interpreting it:
+Babashka loads Clojure code 10 to 20 times faster. Cream compiles every
+function to a class and defines it at runtime, at about 0.2ms per class.
+Babashka interprets the forms directly. Cream runs code faster once loaded, since
+`-H:+GraalJITCompileAtRuntime` compiles runtime-loaded bytecode instead of
+interpreting it:
 
 ```sh
 $ bb -cp "$(clojure -Spath -Sdeps '{:deps {dev.weavejester/medley {:mvn/version "1.9.0"}}}')" -e '(time (require (quote [medley.core :as mc]))) (time (dotimes [i 100000] (mc/greatest 5 2 1 3 4)))'
@@ -246,7 +255,7 @@ When cream might make sense: you need full Clojure compatibility, arbitrary
 library loading, or Java interop beyond what babashka offers.
 
 When babashka is better: scripting, tasks, CI glue, or anything where a
-standalone binary, fast startup, and a mature ecosystem matter.
+standalone binary, fast library loading, and a mature ecosystem matter.
 
 ## Tested libraries
 
@@ -301,7 +310,7 @@ Requires a GraalVM EA build with RuntimeClassLoading support.
 
 - Bundle JRT metadata in the binary so classes from `lib/modules` resolve
   without a JDK
-- Reduce binary size: currently ~208MiB due to preserved packages, the
+- Reduce binary size: currently ~224MB due to preserved packages, the
   Crema interpreter and the Ristretto JIT
 - nREPL support: enable interactive development with editor integration
 
