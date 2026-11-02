@@ -74,7 +74,8 @@
   and fails with an explanation only when it has to resolve."
   [args]
   (if (java-cmd)
-    (apply deps/-main args)
+    (binding [deps/*clojure-tools-download-fn* deps/clojure-tools-download-java!]
+      (apply deps/-main args))
     (binding [deps/*getenv-fn* (fn [env]
                                  (if (= "JAVA_CMD" env)
                                    "java"
