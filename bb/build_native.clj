@@ -7,9 +7,9 @@
 (tasks/clojure "-T:build" "uber")
 (println "done with uberjar")
 
-(p/shell (str (fs/file (System/getenv "GRAALVM_HOME") "bin"
-                       (if (fs/windows?) "native-image.cmd" "native-image")))
-         "-jar" "target/cream-1.0.0-standalone.jar"
+(apply p/shell (str (fs/file (System/getenv "GRAALVM_HOME") "bin"
+                             (if (fs/windows?) "native-image.cmd" "native-image")))
+       (cond-> ["-jar" "target/cream-1.0.0-standalone.jar"
          "-O1"
          "--initialize-at-run-time=com.sun.tools.javac.file.Locations,jdk.internal.jrtfs.SystemImage"
          "--initialize-at-build-time=clojure,cream,org.xml.sax,com.sun.tools.doclint,com.sun.tools.javac.parser.Tokens$TokenKind,com.sun.tools.javac.parser.Tokens$Token$Tag"
@@ -57,4 +57,8 @@
          "-Djava.file.encoding=UTF-8"
          "--enable-url-protocols=http,https,jar,unix"
          "-H:+AllowJRTFileSystem"
-         "--verbose")
+         "--verbose"]
+         ;; Standard macOS runners swap with the default 85% heap
+         (and (System/getenv "CI")
+              (.startsWith (System/getProperty "os.name") "Mac"))
+         (conj "-J-XX:MaxRAMPercentage=60")))
