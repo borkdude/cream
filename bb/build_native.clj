@@ -43,6 +43,8 @@
          "-H:Preserve=package=java.time"
          "-H:Preserve=package=java.security"
          "-H:Preserve=package=java.net"
+         "-H:Preserve=package=sun.net.www.protocol.http"
+         "-H:Preserve=package=sun.net.www.protocol.https"
          "-H:Preserve=package=javax.net"
          "-H:Preserve=package=javax.net.ssl"
          "-H:Preserve=package=java.nio"

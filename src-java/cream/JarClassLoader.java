@@ -29,6 +29,14 @@ public class JarClassLoader extends DynamicClassLoader {
     private final Map<String, List<JarFile>> resourceIndexAll = new HashMap<>();
 
     public JarClassLoader(String[] paths, ClassLoader parent) {
+        this(paths, parent, false);
+    }
+
+    /**
+     * skipClojureInit leaves out JAR entries ending in __init.class.
+     * Clojure namespaces in those JARs then load from source.
+     */
+    public JarClassLoader(String[] paths, ClassLoader parent, boolean skipClojureInit) {
         super(parent);
         for (String p : paths) {
             Path path = Path.of(p);
@@ -41,7 +49,8 @@ public class JarClassLoader extends DynamicClassLoader {
                     Enumeration<JarEntry> entries = jf.entries();
                     while (entries.hasMoreElements()) {
                         JarEntry entry = entries.nextElement();
-                        if (!entry.isDirectory()) {
+                        if (!entry.isDirectory()
+                            && !(skipClojureInit && entry.getName().endsWith("__init.class"))) {
                             resourceIndex.putIfAbsent(entry.getName(), jf);
                             resourceIndexAll.computeIfAbsent(entry.getName(), k -> new ArrayList<>()).add(jf);
                         }

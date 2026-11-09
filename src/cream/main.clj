@@ -68,24 +68,54 @@
         (let [java (fs/path home "bin" "java")]
           (when (fs/executable? java) java)))))
 
+(defn- make-classpath-in-process
+  "Writes the classpath cache files named in args with make-classpath2
+  from the Clojure tools jar, in this process.
+  Returns the output under :out if out is :string.
+  Unloads the namespaces it loads."
+  [{:keys [cmd args out install-tools-fn]}]
+  (install-tools-fn)
+  (let [cmd (vec cmd)
+        tools-jar (nth cmd (inc (.indexOf ^java.util.List cmd "-classpath")))
+        thread (Thread/currentThread)
+        context-loader (.getContextClassLoader thread)
+        cl (JarClassLoader. (into-array String [tools-jar]) context-loader true)
+        loaded-libs @@#'clojure.core/*loaded-libs*
+        namespaces (set (all-ns))
+        run #(apply (requiring-resolve 'clojure.tools.deps.script.make-classpath2/-main) args)]
+    (.setContextClassLoader thread cl)
+    (try
+      (with-bindings {clojure.lang.Compiler/LOADER cl}
+        (if (= :string out)
+          {:out (with-out-str (run))}
+          (do (run) {:out nil})))
+      (finally
+        (.setContextClassLoader thread context-loader)
+        (doseq [n (all-ns)
+                :when (not (contains? namespaces n))]
+          (remove-ns (ns-name n)))
+        (dosync (ref-set @#'clojure.core/*loaded-libs* loaded-libs))))))
+
 (defn- run-deps
-  "Runs deps.clj with args. Computing a classpath needs java, reading a
-  cached one does not, so without java deps.clj gets a placeholder command
-  and fails with an explanation only when it has to resolve."
+  "Runs deps.clj with args.
+  Computes the classpath in this process, or with java if
+  CREAM_DEPS_RESOLVER is jvm."
   [args]
-  (if (java-cmd)
-    (binding [deps/*clojure-tools-download-fn* deps/clojure-tools-download-java!]
-      (apply deps/-main args))
-    (binding [deps/*getenv-fn* (fn [env]
-                                 (if (= "JAVA_CMD" env)
-                                   "java"
-                                   (System/getenv env)))
-              deps/*aux-process-fn*
-              (fn [_]
-                (binding [*out* *err*]
-                  (println (str "Resolving dependencies needs a JVM, but no java was found "
-                                "on the PATH or under JAVA_HOME.")))
-                (System/exit 1))]
+  (let [resolver (System/getenv "CREAM_DEPS_RESOLVER")]
+    (when-not (contains? #{nil "" "cream" "jvm"} resolver)
+      (binding [*out* *err*]
+        (println (str "Unknown CREAM_DEPS_RESOLVER " resolver ", use cream or jvm.")))
+      (System/exit 1))
+    (with-bindings
+      (cond-> {}
+        (not= "jvm" resolver)
+        (assoc #'deps/*make-classpath-fn* make-classpath-in-process)
+        (nil? (java-cmd))
+        (assoc #'deps/*aux-process-fn*
+               (fn [_]
+                 (binding [*out* *err*]
+                   (println "This command needs java, but none was found on the PATH or under JAVA_HOME."))
+                 (System/exit 1))))
       (apply deps/-main args))))
 
 (def ^:private pom-dep
