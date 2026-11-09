@@ -180,7 +180,7 @@ filesystem).
 - Large binary (~213MB, includes Crema interpreter, Ristretto JIT and
   preserved packages)
 - Crema is experimental (GraalVM's RuntimeClassLoading needs Oracle GraalVM
-  25.0.4.1.1 or later)
+  25.4 or later)
 
 See [doc/technical.md](doc/technical.md) for the full list of known issues and
 workarounds.
@@ -290,7 +290,7 @@ the relevant packages are preserved.
 
 ## Building from source
 
-Requires Oracle GraalVM 25.0.4.1.1 or later.
+Requires Oracle GraalVM 25.4 or later.
 
 1. Install the [custom Clojure fork](https://github.com/borkdude/clojure/tree/crema):
    ```sh
