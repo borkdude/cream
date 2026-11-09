@@ -90,9 +90,9 @@ ignored:
 ```
 
 Dependencies are resolved with [deps.clj](https://github.com/borkdude/deps.clj),
-which is built into the binary. Resolving needs `java` on the `PATH` or
-`JAVA_HOME` set, reading the cached classpath from `.cpcache` does not. The
-first resolution downloads the Clojure tools jar to `~/.deps.clj`.
+which is built into the binary. The first resolution downloads the Clojure
+tools jar to `~/.deps.clj` and runs tools.deps from it in the cream process.
+Set `CREAM_DEPS_RESOLVER=jvm` to resolve with `java` instead.
 
 ## Running Java files
 
@@ -166,9 +166,6 @@ Running `.java` files requires `JAVA_HOME` pointing to a JDK, since cream
 shells out to `javac`. A JDK is also needed for classes that are neither in the
 image nor on the classpath, which Crema loads from `lib/modules` (JRT
 filesystem).
-
-Resolving `deps.edn` or `-Sdeps` dependencies needs `java` on the `PATH` or
-`JAVA_HOME` set. A cached classpath is read without either.
 
 ## Known limitations
 
