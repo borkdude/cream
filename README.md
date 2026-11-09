@@ -177,10 +177,10 @@ filesystem).
   quirks in `RT.java` and `Var.java`,
   [details](doc/technical.md#fork-changes))
 - Java enum support fixed in GraalVM ea17 ([oracle/graal#13034](https://github.com/oracle/graal/issues/13034))
-- Large binary (~224MB, includes Crema interpreter, Ristretto JIT and
+- Large binary (~213MB, includes Crema interpreter, Ristretto JIT and
   preserved packages)
-- Crema is EA (GraalVM's RuntimeClassLoading is experimental and only
-  available in [EA builds](https://github.com/graalvm/oracle-graalvm-ea-builds))
+- Crema is experimental (GraalVM's RuntimeClassLoading needs Oracle GraalVM
+  25.0.4.1.1 or later)
 
 See [doc/technical.md](doc/technical.md) for the full list of known issues and
 workarounds.
@@ -198,9 +198,9 @@ workarounds.
 | Binary size | ~224MB | ~75MB |
 | Built-in libraries | Clojure standard library | http-kit, cheshire, clj-yaml, data.csv, transit, selmer and more |
 | Tooling | | Tasks, nREPL, pods |
-| Dependency resolution | Needs `java` | In-process, no JDK |
+| Dependency resolution | In-process, no JDK | In-process, no JDK |
 | Standalone | Yes for Clojure, JDK needed to run `.java` files | Yes |
-| GraalVM | EA build and a Clojure fork | Release build |
+| GraalVM | Oracle GraalVM and a Clojure fork | Release build |
 | Compile time (GitHub Actions, linux-amd64) | ~10min | ~3min |
 | Maturity | Experimental | Production-ready |
 
@@ -290,7 +290,7 @@ the relevant packages are preserved.
 
 ## Building from source
 
-Requires a GraalVM EA build with RuntimeClassLoading support.
+Requires Oracle GraalVM 25.0.4.1.1 or later.
 
 1. Install the [custom Clojure fork](https://github.com/borkdude/clojure/tree/crema):
    ```sh
