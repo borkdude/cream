@@ -325,7 +325,8 @@
   []
   (boolean (when-let [home (or (System/getenv "JAVA_HOME")
                                (System/getProperty "java.home"))]
-             (fs/exists? (fs/path home "lib" "modules")))))
+             ;; /lib/modules is the kernel modules directory on Linux
+             (fs/regular-file? (fs/path home "lib" "modules")))))
 
 (defn- prime-boot-class-registry!
   "Crema prints a warning on stdout the first time it consults the boot class
