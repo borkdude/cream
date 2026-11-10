@@ -16,7 +16,7 @@ cd /tmp/clojure-fork && mvn install -Dmaven.test.skip=true
 # Build uberjar only
 bb uber
 
-# Build native binary (requires GRAALVM_HOME env var pointing to GraalVM EA)
+# Build native binary (requires GRAALVM_HOME env var pointing to Oracle GraalVM 25.4)
 GRAALVM_HOME=/path/to/graalvm bb build-native
 
 # Generate reflect-config.json
@@ -45,7 +45,7 @@ bb run-lib-tests medley/medley
 
 ## Key Constraints
 
-- Requires Oracle GraalVM 25.0.4.1.1 or later (sdkman `25.4.4+1-graal`), the first release with RuntimeClassLoading, Ristretto and the GH-14075 verifier fix. CI uses `graalvm/setup-graalvm` with `java-version: '25'`, which is unpinned because Oracle's archive URLs for 25.0.4.1.1 return 404
+- Requires Oracle GraalVM 25.0.4.1.1 or later (sdkman `25.4.4+1-graal`), the first release with RuntimeClassLoading, Ristretto and the GH-14075 verifier fix. CI uses `graalvm/setup-graalvm` with `java-version: '25'` and `version: '25.4'`. Without `version`, it installs the JDK 25 GA release, which lacks Ristretto
 - Java enums were broken in Crema (`enum.values()` NPE) — fixed in ea17 (PR #13081)
 - `Class.forName` was not dispatchable in Crema from runtime-loaded bytecode — [GH-13031](https://github.com/oracle/graal/issues/13031), fixed upstream by [GH-13187](https://github.com/oracle/graal/pull/13187) (merged 2026-03-24). The fork's `RT.classForName` redirect was removed after verifying the fix on ea.04; the fork's remaining delta vs upstream is only the build-time init skips in `RT.java`, the buildtime `set` fallback in `Var.java`, and the version in `pom.xml`. clj-yaml (SnakeYAML) works since ea20 after adding `Preserve=package=java.lang` — the actual blocker was `StringConcat` generated classes needing `java.lang.String` methods compiled, not `Class.forName`.
 - Java lambdas across classloader boundaries — fixed in ea20 by [GH-13190](https://github.com/oracle/graal/pull/13190). Lambda repro at `repro/lambda/` now prints `HELLO`. nextjournal.markdown (wrapping commonmark-java) works and is in the lib test suite.
@@ -56,4 +56,6 @@ bb run-lib-tests medley/medley
 - Some tests are skipped per-library due to Crema limitations (see `skip-tests` and `skip-namespaces` in `bb/run_lib_tests.clj`)
 - The binary is ~208MiB due to preserved packages, the Crema interpreter, and the Ristretto JIT (~30MiB of it is the JIT, measured by dropping `-H:+GraalJITCompileAtRuntime`)
 - `-H:+GraalJITCompileAtRuntime` enables Ristretto, the JIT for runtime-loaded bytecode. Without it everything runs interpreted: a 10M-iteration `loop`/`recur` takes ~1275ms interpreted vs ~38ms JIT-compiled. Requires `-H:+RuntimeClassLoading`; conflicts with `SupportCompileInIsolates`. Startup stays ~10ms.
+- Native Image layers (`-H:LayerCreate`) do not work with cream. Crema, the bytecode interpreter and Ristretto are `DisallowLayered` singletons on Graal master as of 2026-11-10. A base layer build fails with "Singleton with DISALLOW_LAYERED trait should never be added to a layered build".
+- The macOS CI build takes about 45 minutes against 6 on Linux. The free macOS runner has 7GB RAM and the build peaks at about 7GB on Linux. Capping the builder heap (`-J-XX:MaxRAMPercentage=60`) made it slower: 75% of the time went to GC.
 - ForkJoinPool / virtual thread segfault (`repro/forkjoin/`) fixed on the jvmci-25.1-b19 line. A second vthread memory corruption (`repro/core-async-vthread-segfault/`, [GH-13925](https://github.com/oracle/graal/issues/13925)) crashed core.async's async-test; fixed in 25i2-25.0.3-ea.04 — full core.async test namespaces pass there and on 25.0.4.1.1.
